@@ -70,6 +70,7 @@ function LandingPage() {
                             <li><a href="#" className="hover:opacity-70">Help</a></li>
                             <li><a href="#" className="hover:opacity-70">English</a></li>
                             <li><a href="#" className="hover:opacity-70">Sign up</a></li>
+                            <li>|</li>
                             <li><a href="#" className="hover:opacity-70">Login</a></li>
                         </ol>
                     </div>
