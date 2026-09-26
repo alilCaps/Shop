@@ -1,4 +1,5 @@
-import logo from "./assets/logo.png";
+import logo from "./assets/logo/white_logo.png";
+import { Link } from "react-router-dom";
 
 function LandingPage() {
     const categories = [
@@ -71,7 +72,7 @@ function LandingPage() {
                             <li><a href="#" className="hover:opacity-70">English</a></li>
                             <li><a href="#" className="hover:opacity-70">Sign up</a></li>
                             <li>|</li>
-                            <li><a href="#" className="hover:opacity-70">Login</a></li>
+                            <li><Link to="./Login" className="hover:opacity-70">Login</Link></li>
                         </ol>
                     </div>
 
