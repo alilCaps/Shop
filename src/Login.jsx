@@ -1,4 +1,5 @@
 import logo from "./assets/logo/orange_logo.png";
+import {Link} from "react-router-dom";
 
 function Login() {
     return (
@@ -9,10 +10,10 @@ function Login() {
                 <div className="max-w-6xl mx-auto px-6 py-5 flex items-center">
                     
                     {/* Shopee Logo */}
-                    <div className="flex items-center gap-3">
+                    <Link to="/LandingPage" className="flex items-center gap-3">
                         <img src={logo}alt="Shopee Logo"className="w-35 h-auto object-contain"/>
                         <span className="text-2xl text-gray-600 ml-2"> Login</span>
-                    </div>
+                    </Link>
 
                 </div>
             </header>
@@ -97,9 +98,9 @@ function Login() {
                         {/* Sign Up */}
                         <div className="text-center mt-7 text-sm text-gray-500">
                             New to Shopee?{" "}
-                            <a href="#" className="text-[#EE4D2D] hover:underline font-medium">
+                            <Link to="/SignUp" className="text-[#EE4D2D] hover:underline font-medium">
                                 Sign Up
-                            </a>
+                            </Link>
                         </div>
 
                     </div>
