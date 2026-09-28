@@ -1,12 +1,40 @@
 import logo from "./assets/logo/white_logo.png";
 import { Link } from "react-router-dom";
+import laptopComputers from "./assets/laptop-computers.jpg";
+import makeupFragrances from "./assets/makeup-fragrances.jpg";
+import homeLiving from "./assets/home-living.jpg";
+import healthPersonalCare from "./assets/healthPersonalCare.jpg";
+import sports from "./assets/sports.jpg";
+import toys from "./assets/toys.jpg";
+import groceries from "./assets/groceries.jpg";
+import shoes from "./assets/shoes.jpg";
+import bags from "./assets/bags.jpg";
+import accessories from "./assets/accessories.jpg";
+
+import rackOrganizer from "./assets/rack-organizer.jpg";
+import tshirt from "./assets/t-shirt.jpg";
+import earphones from "./assets/earphones.jpg";
+import mattress from "./assets/mattress.jpg";
+import eyeglasses from "./assets/eyeglasses.jpg";
+
+import miniFan from "./assets/mini-fan.jpg";
+import waterBottle from "./assets/water-bottle.jpg";
+import deskLamp from "./assets/desk-lamp.jpg";
+import backpack from "./assets/backpack.jpg";
+import mouse from "./assets/wireless-mouse.jpg";
+
+import mug from "./assets/ceramic-mug.jpg";
+import phoneStand from "./assets/phone-stand.jpg";
+import makeupOrganizer from "./assets/makeup-organizer.jpg";
+import stringLights from "./assets/led-string-lights.jpg";
+import storageBox from "./assets/foldable-storage-box.jpg";
 
 function LandingPage() {
     const categories = [
-        "Electronics",
-        "Fashion",
+        "Laptops & Computers",
+        "Makeups & Fragrances",
         "Home & Living",
-        "Health & Beauty",
+        "Health & Personal Care",
         "Sports & Outdoors",
         "Toys & Games",
         "Groceries",
@@ -15,38 +43,140 @@ function LandingPage() {
         "Accessories"
     ];
 
+    const categoryImages = [
+        laptopComputers,
+        makeupFragrances,
+        homeLiving,
+        healthPersonalCare,
+        sports,
+        toys,
+        groceries,
+        shoes,
+        bags,
+        accessories
+    ];
+
     const products = [
         {
             name: "Moving Rack Organizer",
             price: "₱299",
             sold: "1.2k sold",
-            discount: "-50%"
+            discount: "-50%",
+            rating: "4.8",
+            status: "SELLING FAST",
+            image: rackOrganizer
         },
         {
             name: "Oversized Trend T-Shirt",
             price: "₱199",
             sold: "2.5k sold",
-            discount: "-40%"
+            discount: "-40%",
+            rating: "4.7",
+            status: "ONLY 5 LEFT",
+            image: tshirt
         },
         {
             name: "Wireless Bluetooth Earphones",
             price: "₱399",
             sold: "3.1k sold",
-            discount: "-60%"
+            discount: "-60%",
+            rating: "4.9",
+            status: "ONLY 7 LEFT",
+            image: earphones
         },
         {
             name: "Double Mattress Foam",
             price: "₱899",
             sold: "856 sold",
-            discount: "-30%"
+            discount: "-30%",
+            rating: "4.8",
+            status: "SELLING FAST",
+            image: mattress
         },
         {
             name: "Eyeglasses With Graded Lens",
             price: "₱249",
             sold: "1.8k sold",
-            discount: "-45%"
+            discount: "-45%",
+            rating: "4.6",
+            status: "ONLY 6 LEFT",
+            image: eyeglasses
         }
     ];
+    
+
+    const discoverProducts = [
+    {
+        name: "Portable Mini Fan",
+        price: "₱149",
+        sold: "2.8k sold",
+        rating: "⭐ 4.8",
+        image: miniFan
+    },
+    {
+        name: "Stainless Steel Water Bottle",
+        price: "₱299",
+        sold: "1.6k sold",
+        rating: "⭐ 4.6",
+        image: waterBottle
+    },
+    {
+        name: "LED Desk Lamp",
+        price: "₱399",
+        sold: "2.3k sold",
+        rating: "⭐ 4.7",
+        image: deskLamp
+    },
+    {
+        name: "Laptop Backpack",
+        price: "₱599",
+        sold: "1.1k sold",
+        rating: "⭐ 4.9",
+        image: backpack
+    },
+    {
+        name: "Wireless Mouse",
+        price: "₱249",
+        sold: "3.7k sold",
+        rating: "⭐ 4.5",
+        image: mouse
+    },
+    {
+        name: "Cute Ceramic Mug",
+        price: "₱129",
+        sold: "2.1k sold",
+        rating: "⭐ 4.8",
+        image: mug
+    },
+    {
+        name: "Phone Stand",
+        price: "₱99",
+        sold: "4.2k sold",
+        rating: "⭐ 4.9",
+        image: phoneStand
+    },
+    {
+        name: "Makeup Organizer",
+        price: "₱189",
+        sold: "1.9k sold",
+        rating: "⭐ 4.7",
+        image: makeupOrganizer
+    },
+    {
+        name: "LED String Lights",
+        price: "₱159",
+        sold: "2.6k sold",
+        rating: "⭐ 4.6",
+        image: stringLights
+    },
+    {
+        name: "Foldable Storage Box",
+        price: "₱219",
+        sold: "1.4k sold",
+        rating: "⭐ 4.8",
+        image: storageBox
+    }
+];
 
     return (
         <div className="parentContainer bg-gray-100 min-w-300">
@@ -187,8 +317,8 @@ function LandingPage() {
 
                             <a href="#" key={index} className="flex flex-col items-center justify-center py-6 border-r border-b hover:shadow-md">
 
-                                <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center text-2xl">
-                                    🛍️
+                                <div className="w-12 h-12 flex items-center justify-center">
+                                    <img src={categoryImages[index]} alt={category} className="w-12 h-12 object-contain"/>    
                                 </div>
 
                                 <span className="text-xs text-center mt-3 px-2">{category}</span>
@@ -211,42 +341,61 @@ function LandingPage() {
 
                     <div className="grid grid-cols-5">
 
-                        {products.map((product, index) => (
-                            <div key={index} className="border-r p-4 hover:shadow-lg cursor-pointer">
+    {products.map((product, index) => (
+        <div
+            key={index}
+            className="bg-white p-3 hover:shadow-lg cursor-pointer"
+        >
 
-                                {/* PRODUCT IMAGE */}
-                                <div className="h-44 bg-gray-100 flex items-center justify-center text-6xl">
-                                    🛍️
-                                </div>
+            {/* PRODUCT IMAGE */}
+            <div className="h-40 relative bg-white flex items-center justify-center">
+
+                <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-full w-full object-contain"
+                />
+
+                {/* DISCOUNT */}
+                <span className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-2 py-1">
+                    {product.discount}
+                </span>
+
+            </div>
 
 
-                                {/* DISCOUNT */}
-                                <div className="mt-3">
-                                    <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1">
-                                        {product.discount}
-                                    </span>
-                                </div>
+            {/* PRODUCT NAME */}
+            <h3 className="text-sm text-gray-700 mt-2 line-clamp-2 h-10">
+                {product.name}
+            </h3>
 
 
-                                {/* PRODUCT NAME */}
-                                <h3 className="text-sm text-gray-700 mt-3 line-clamp-2">
-                                    {product.name}
-                                </h3>
+            {/* PRICE */}
+            <div className="mt-2 text-center">
+                <span className="text-orange-500 text-xl font-medium">
+                    {product.price}
+                </span>
+            </div>
 
 
-                                {/* PRICE */}
-                                <div className="mt-3 flex items-center justify-between">
-                                    <span className="text-orange-500 text-lg">
-                                        {product.price}
-                                    </span>
-                                    <span className="text-xs text-gray-500">
-                                        {product.sold}
-                                    </span>
-                                </div>
+            {/* RATING + SOLD */}
+            <div className="flex justify-between mt-2 text-xs text-gray-500">
+                <span>⭐ {product.rating}</span>
+                <span>{product.sold}</span>
+            </div>
 
-                            </div>
-                        ))}
-                    </div>
+
+            {/* SELLING STATUS */}
+            <div className="mt-3 bg-orange-100 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-orange-500 to-orange-300 text-white text-xs text-center py-1 rounded-full">
+                    🔥 {product.status}
+                </div>
+            </div>
+
+        </div>
+    ))}
+
+</div>  
 
                 </section>
 
@@ -254,16 +403,13 @@ function LandingPage() {
                 {/* Discover */}
                 <section className="mt-6">
 
-                    <div className="bg-white border-b-2 border-orange-500">
-                        <h2 className="text-xl text-orange-500 px-6 py-4">DAILY DISCOVER</h2>
-                    </div>
+                        <div className="bg-white border-b-2 border-orange-500">
+                            <h2 className="text-xl text-orange-500 px-6 py-4">DAILY DISCOVER</h2>
+                        </div>
 
 
                     <div className="grid grid-cols-5 gap-3 mt-3">
-                        {[
-                            ...products,
-                            ...products
-                        ].map((product, index) => (
+                        {discoverProducts.map((product, index) =>  (
 
                             <div
                                 key={index}
@@ -271,8 +417,8 @@ function LandingPage() {
                             >
 
                                 {/* IMAGE */}
-                                <div className="h-52 bg-gray-100 flex items-center justify-center text-7xl">
-                                    🛒
+                                <div className="h-52 bg-white flex items-center justify-center">
+                                    <img src={product.image} alt={product.name} className="h-full object-contain"/>
                                 </div>
 
                                 <div className="p-4">
@@ -291,7 +437,7 @@ function LandingPage() {
 
                                     <div className="flex justify-between mt-2 text-xs text-gray-500">
 
-                                        <span>⭐ 4.8</span>
+                                        <span>{product.rating}</span>
 
                                         <span>
                                             {product.sold}
