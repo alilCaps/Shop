@@ -1,5 +1,6 @@
 import logo from "./assets/logo/white_logo.png";
 import { Link } from "react-router-dom";
+
 import laptopComputers from "./assets/laptop-computers.jpg";
 import makeupFragrances from "./assets/makeup-fragrances.jpg";
 import homeLiving from "./assets/home-living.jpg";
