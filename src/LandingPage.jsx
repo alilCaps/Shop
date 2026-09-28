@@ -387,7 +387,7 @@ function LandingPage() {
 
             {/* SELLING STATUS */}
             <div className="mt-3 bg-orange-100 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-orange-500 to-orange-300 text-white text-xs text-center py-1 rounded-full">
+                <div className="bg-linear-to-r from-orange-500 to-orange-300 text-white text-xs text-center py-1 rounded-full">
                     🔥 {product.status}
                 </div>
             </div>
