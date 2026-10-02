@@ -1,5 +1,10 @@
 import logo from "./assets/logo/white_logo.png";
+
 import { Link } from "react-router-dom";
+
+import CategoryCard from "./assets/cards/CategoryCards.jsx";
+import FlashSaleCard from "./assets/cards/FlashSaleCards.jsx";
+import DiscoverCard from "./assets/cards/DiscoverCards.jsx";
 
 import laptopComputers from "./assets/laptop-computers.jpg";
 import makeupFragrances from "./assets/makeup-fragrances.jpg";
@@ -23,12 +28,12 @@ import waterBottle from "./assets/water-bottle.jpg";
 import deskLamp from "./assets/desk-lamp.jpg";
 import backpack from "./assets/backpack.jpg";
 import mouse from "./assets/wireless-mouse.jpg";
-
 import mug from "./assets/ceramic-mug.jpg";
 import phoneStand from "./assets/phone-stand.jpg";
 import makeupOrganizer from "./assets/makeup-organizer.jpg";
 import stringLights from "./assets/led-string-lights.jpg";
 import storageBox from "./assets/foldable-storage-box.jpg";
+
 
 function LandingPage() {
     const categories = [
@@ -315,16 +320,11 @@ function LandingPage() {
                     <div className="grid grid-cols-10">
 
                         {categories.map((category, index) => (
-
-                            <a href="#" key={index} className="flex flex-col items-center justify-center py-6 border-r border-b hover:shadow-md">
-
-                                <div className="w-12 h-12 flex items-center justify-center">
-                                    <img src={categoryImages[index]} alt={category} className="w-12 h-12 object-contain"/>    
-                                </div>
-
-                                <span className="text-xs text-center mt-3 px-2">{category}</span>
-
-                            </a>
+                            <CategoryCard
+                                key={index}
+                                category={category}
+                                image={categoryImages[index]}
+                            />
                         ))}
 
                     </div>
@@ -341,62 +341,13 @@ function LandingPage() {
 
 
                     <div className="grid grid-cols-5">
-
-    {products.map((product, index) => (
-        <div
-            key={index}
-            className="bg-white p-3 hover:shadow-lg cursor-pointer"
-        >
-
-            {/* PRODUCT IMAGE */}
-            <div className="h-40 relative bg-white flex items-center justify-center">
-
-                <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-full w-full object-contain"
-                />
-
-                {/* DISCOUNT */}
-                <span className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-2 py-1">
-                    {product.discount}
-                </span>
-
-            </div>
-
-
-            {/* PRODUCT NAME */}
-            <h3 className="text-sm text-gray-700 mt-2 line-clamp-2 h-10">
-                {product.name}
-            </h3>
-
-
-            {/* PRICE */}
-            <div className="mt-2 text-center">
-                <span className="text-orange-500 text-xl font-medium">
-                    {product.price}
-                </span>
-            </div>
-
-
-            {/* RATING + SOLD */}
-            <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>⭐ {product.rating}</span>
-                <span>{product.sold}</span>
-            </div>
-
-
-            {/* SELLING STATUS */}
-            <div className="mt-3 bg-orange-100 rounded-full overflow-hidden">
-                <div className="bg-linear-to-r from-orange-500 to-orange-300 text-white text-xs text-center py-1 rounded-full">
-                    🔥 {product.status}
-                </div>
-            </div>
-
-        </div>
-    ))}
-
-</div>  
+                        {products.map((product, index) => (
+                            <FlashSaleCard
+                                key={index}
+                                product={product}
+                            />
+                        ))}
+                    </div>  
 
                 </section>
 
@@ -408,51 +359,14 @@ function LandingPage() {
                             <h2 className="text-xl text-orange-500 px-6 py-4">DAILY DISCOVER</h2>
                         </div>
 
-
-                    <div className="grid grid-cols-5 gap-3 mt-3">
-                        {discoverProducts.map((product, index) =>  (
-
-                            <div
-                                key={index}
-                                className="bg-white hover:shadow-lg cursor-pointer"
-                            >
-
-                                {/* IMAGE */}
-                                <div className="h-52 bg-white flex items-center justify-center">
-                                    <img src={product.image} alt={product.name} className="h-full object-contain"/>
-                                </div>
-
-                                <div className="p-4">
-
-                                    <h3 className="text-sm text-gray-700 h-10">
-                                        {product.name}
-                                    </h3>
-
-                                    <div className="mt-4">
-
-                                        <span className="text-orange-500 text-xl">
-                                            {product.price}
-                                        </span>
-
-                                    </div>
-
-                                    <div className="flex justify-between mt-2 text-xs text-gray-500">
-
-                                        <span>{product.rating}</span>
-
-                                        <span>
-                                            {product.sold}
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        ))}
-
-                    </div>
+                        <div className="grid grid-cols-5 gap-3 mt-3">
+                            {discoverProducts.map((product, index) => (
+                                <DiscoverCard
+                                    key={index}
+                                    product={product}
+                                />
+                            ))}
+                        </div>
 
                 </section>
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.get("/users", (req, res) => {
 app.post("/login", (req, res) => {
     console.log("=================================");
     console.log("LOGIN REQUEST RECEIVED");
-    console.log("BODY:", req.body);
+    console.log("EMAIL:", req.body.email);
     console.log("=================================");
 
     const { email, password } = req.body;
@@ -43,6 +44,7 @@ app.post("/login", (req, res) => {
             u.user_id,
             u.username,
             u.email,
+            u.password_hash,
             u.first_name,
             u.last_name,
             u.phone,
@@ -53,13 +55,11 @@ app.post("/login", (req, res) => {
         FROM users u
         INNER JOIN roles r
             ON u.role_id = r.role_id
-        WHERE u.email = ?
-        AND u.password_hash = ?
-    `;
+        WHERE u.email = ?`;
 
     console.log("Running login query...");
 
-    db.query(sql, [email, password], (err, results) => {
+    db.query(sql, [email], async (err, results) => {
         if (err) {
             console.error("MYSQL ERROR:", err);
 
@@ -85,6 +85,18 @@ app.post("/login", (req, res) => {
             });
         }
 
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        console.log("PASSWORD VERIFIED");
         console.log("USER ROLE:", user.role_name);
 
         return res.status(200).json({
@@ -103,6 +115,182 @@ app.post("/login", (req, res) => {
             }
         });
     });
+});
+
+app.post("/signup", async (req, res) => {
+
+    console.log("=================================");
+    console.log("SIGNUP REQUEST RECEIVED");
+    console.log("BODY:", req.body);
+    console.log("=================================");
+
+    const {
+        phone,
+        username,
+        email,
+        password
+    } = req.body;
+
+
+    // Check required fields
+    if (!phone || !username || !email || !password) {
+
+        return res.status(400).json({
+            message: "All fields are required."
+        });
+
+    }
+
+
+    try {
+
+        // Check if username or email already exists
+        const checkSql = `
+            SELECT user_id
+            FROM users
+            WHERE username = ?
+            OR email = ?
+        `;
+
+        db.query(
+            checkSql,
+            [username, email],
+            async (err, results) => {
+
+                if (err) {
+
+                    console.error("MYSQL ERROR:", err);
+
+                    return res.status(500).json({
+                        message: "Database error.",
+                        error: err.message
+                    });
+
+                }
+
+
+                if (results.length > 0) {
+
+                    return res.status(409).json({
+                        message: "Username or email is already registered."
+                    });
+
+                }
+
+
+                // Hash password
+                const hashedPassword = await bcrypt.hash(password, 10);
+
+                console.log("Password successfully hashed.");
+
+
+                // Find Customer role
+                const roleSql = `
+                    SELECT role_id
+                    FROM roles
+                    WHERE LOWER(role_name) = 'customer'
+                    LIMIT 1
+                `;
+
+                db.query(roleSql, (roleErr, roleResults) => {
+
+                    if (roleErr) {
+
+                        console.error("ROLE MYSQL ERROR:", roleErr);
+
+                        return res.status(500).json({
+                            message: "Unable to find customer role.",
+                            error: roleErr.message
+                        });
+
+                    }
+
+
+                    if (roleResults.length === 0) {
+
+                        return res.status(500).json({
+                            message: "Customer role does not exist."
+                        });
+
+                    }
+
+
+                    const customerRoleId = roleResults[0].role_id;
+
+
+                    // Insert new user
+                    const insertSql = `
+                        INSERT INTO users (
+                            username,
+                            email,
+                            password_hash,
+                            first_name,
+                            last_name,
+                            phone,
+                            status,
+                            role_id
+                        )
+                        VALUES (?, ?, ?, '', '', ?, 'ACTIVE', ?)`;
+
+
+                    db.query(
+                        insertSql,
+                        [
+                            username,
+                            email,
+                            hashedPassword,
+                            phone,
+                            customerRoleId
+                        ],
+                        (insertErr, result) => {
+
+                            if (insertErr) {
+
+                                console.error(
+                                    "INSERT MYSQL ERROR:",
+                                    insertErr
+                                );
+
+                                return res.status(500).json({
+                                    message: "Unable to create account.",
+                                    error: insertErr.message
+                                });
+
+                            }
+
+
+                            console.log(
+                                "NEW USER CREATED:",
+                                result.insertId
+                            );
+
+
+                            return res.status(201).json({
+
+                                message: "Account created successfully.",
+
+                                user_id: result.insertId
+
+                            });
+
+                        }
+                    );
+
+                });
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error("SIGNUP ERROR:", error);
+
+        return res.status(500).json({
+            message: "Server error."
+        });
+
+    }
+
 });
 
 app.listen(5000, () => {
