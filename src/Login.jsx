@@ -127,18 +127,6 @@ function Login() {
 
             </header>
 
-            {loading && (
-                <p className="text-center py-6 text-gray-600">
-                    Loading categories and products...
-                </p>
-            )}
-
-            {error && (
-                <p className="text-center py-6 text-red-600">
-                    {error}
-                </p>
-            )}
-
             {/* LOGIN SECTION */}
             <main className="min-h-[calc(100vh-72px)] flex items-center justify-center px-4 py-10">
 
