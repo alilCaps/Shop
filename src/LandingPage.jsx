@@ -1,6 +1,7 @@
 import logo from "./assets/logo/white_logo.png";
 
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import CategoryCard from "./assets/cards/CategoryCards.jsx";
 import FlashSaleCard from "./assets/cards/FlashSaleCards.jsx";
@@ -36,153 +37,117 @@ import storageBox from "./assets/foldable-storage-box.jpg";
 
 
 function LandingPage() {
-    const categories = [
-        "Laptops & Computers",
-        "Makeups & Fragrances",
-        "Home & Living",
-        "Health & Personal Care",
-        "Sports & Outdoors",
-        "Toys & Games",
-        "Groceries",
-        "Shoes",
-        "Bags",
-        "Accessories"
+    const [categories, setCategories] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    const categoryImageMap = {
+        "Laptops & Computers": laptopComputers,
+        "Electronics": laptopComputers,
+        "Makeups & Fragrances": makeupFragrances,
+        "Home & Living": homeLiving,
+        "Health & Personal Care": healthPersonalCare,
+        "Health & Beauty": healthPersonalCare,
+        "Sports & Outdoors": sports,
+        "Toys & Games": toys,
+        "Groceries": groceries,
+        "Shoes": shoes,
+        "Bags": bags,
+        "Accessories": accessories
+    };
+
+    const productImageMap = {
+        "Moving Rack Organizer": rackOrganizer,
+        "Oversized Trend T-Shirt": tshirt,
+        "Wireless Bluetooth Earphones": earphones,
+        "Double Mattress Foam": mattress,
+        "Eyeglasses With Graded Lens": eyeglasses,
+        "Portable Mini Fan": miniFan,
+        "Stainless Steel Water Bottle": waterBottle,
+        "LED Desk Lamp": deskLamp,
+        "Laptop Backpack": backpack,
+        "Wireless Mouse": mouse,
+        "Cute Ceramic Mug": mug,
+        "Phone Stand": phoneStand,
+        "Makeup Organizer": makeupOrganizer,
+        "LED String Lights": stringLights,
+        "Foldable Storage Box": storageBox
+    };
+
+    const featuredNames = [
+        "Moving Rack Organizer",
+        "Oversized Trend T-Shirt",
+        "Wireless Bluetooth Earphones",
+        "Double Mattress Foam",
+        "Eyeglasses With Graded Lens"
     ];
 
-    const categoryImages = [
-        laptopComputers,
-        makeupFragrances,
-        homeLiving,
-        healthPersonalCare,
-        sports,
-        toys,
-        groceries,
-        shoes,
-        bags,
-        accessories
-    ];
+    useEffect(() => {
+        const loadLandingPageData = async () => {
+            try {
+                setLoading(true);
+                setError("");
 
-    const products = [
-        {
-            name: "Moving Rack Organizer",
-            price: "₱299",
-            sold: "1.2k sold",
-            discount: "-50%",
-            rating: "4.8",
-            status: "SELLING FAST",
-            image: rackOrganizer
-        },
-        {
-            name: "Oversized Trend T-Shirt",
-            price: "₱199",
-            sold: "2.5k sold",
-            discount: "-40%",
-            rating: "4.7",
-            status: "ONLY 5 LEFT",
-            image: tshirt
-        },
-        {
-            name: "Wireless Bluetooth Earphones",
-            price: "₱399",
-            sold: "3.1k sold",
-            discount: "-60%",
-            rating: "4.9",
-            status: "ONLY 7 LEFT",
-            image: earphones
-        },
-        {
-            name: "Double Mattress Foam",
-            price: "₱899",
-            sold: "856 sold",
-            discount: "-30%",
-            rating: "4.8",
-            status: "SELLING FAST",
-            image: mattress
-        },
-        {
-            name: "Eyeglasses With Graded Lens",
-            price: "₱249",
-            sold: "1.8k sold",
-            discount: "-45%",
-            rating: "4.6",
-            status: "ONLY 6 LEFT",
-            image: eyeglasses
-        }
-    ];
-    
+                const [categoryResponse, productResponse] =
+                    await Promise.all([
+                        fetch("http://localhost:5000/api/categories"),
+                        fetch("http://localhost:5000/api/products")
+                    ]);
 
-    const discoverProducts = [
-    {
-        name: "Portable Mini Fan",
-        price: "₱149",
-        sold: "2.8k sold",
-        rating: "⭐ 4.8",
-        image: miniFan
-    },
-    {
-        name: "Stainless Steel Water Bottle",
-        price: "₱299",
-        sold: "1.6k sold",
-        rating: "⭐ 4.6",
-        image: waterBottle
-    },
-    {
-        name: "LED Desk Lamp",
-        price: "₱399",
-        sold: "2.3k sold",
-        rating: "⭐ 4.7",
-        image: deskLamp
-    },
-    {
-        name: "Laptop Backpack",
-        price: "₱599",
-        sold: "1.1k sold",
-        rating: "⭐ 4.9",
-        image: backpack
-    },
-    {
-        name: "Wireless Mouse",
-        price: "₱249",
-        sold: "3.7k sold",
-        rating: "⭐ 4.5",
-        image: mouse
-    },
-    {
-        name: "Cute Ceramic Mug",
-        price: "₱129",
-        sold: "2.1k sold",
-        rating: "⭐ 4.8",
-        image: mug
-    },
-    {
-        name: "Phone Stand",
-        price: "₱99",
-        sold: "4.2k sold",
-        rating: "⭐ 4.9",
-        image: phoneStand
-    },
-    {
-        name: "Makeup Organizer",
-        price: "₱189",
-        sold: "1.9k sold",
-        rating: "⭐ 4.7",
-        image: makeupOrganizer
-    },
-    {
-        name: "LED String Lights",
-        price: "₱159",
-        sold: "2.6k sold",
-        rating: "⭐ 4.6",
-        image: stringLights
-    },
-    {
-        name: "Foldable Storage Box",
-        price: "₱219",
-        sold: "1.4k sold",
-        rating: "⭐ 4.8",
-        image: storageBox
-    }
-];
+                if (!categoryResponse.ok || !productResponse.ok) {
+                    throw new Error("Unable to retrieve landing page data.");
+                }
+
+                const categoryData = await categoryResponse.json();
+                const productData = await productResponse.json();
+
+                setCategories(
+                    categoryData.map((category) => category.category_name)
+                );
+
+                setAllProducts(
+                    productData.map((product) => ({
+                        ...product,
+                        price: `₱${Number(product.price).toLocaleString("en-PH", {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2
+                        })}`,
+                        sold: `${Number(product.sold).toLocaleString("en-PH")} sold`,
+                        rating: Number(product.rating || 0).toFixed(1),
+                        image: productImageMap[product.name] || accessories,
+                        stock: Number(product.stock || 0)
+                    }))
+                );
+            } catch (err) {
+                console.error("LANDING PAGE ERROR:", err);
+                setError(err.message || "Unable to load landing page data.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadLandingPageData();
+    }, []);
+
+    const categoryImages = categories.map(
+        (category) => categoryImageMap[category] || accessories
+    );
+
+    const products = featuredNames
+        .map((name) => allProducts.find((product) => product.name === name))
+        .filter(Boolean)
+        .map((product) => ({
+            ...product,
+            discount: "",
+            status: product.stock > 0 && product.stock <= 7
+                ? `ONLY ${product.stock} LEFT`
+                : "SELLING FAST"
+        }));
+
+    const discoverProducts = allProducts.filter(
+    (product) => !featuredNames.includes(product.name)
+);
 
     return (
         <div className="parentContainer bg-gray-100 min-w-300">

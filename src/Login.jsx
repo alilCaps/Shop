@@ -43,17 +43,29 @@ function Login() {
                 return;
             }
 
+            // Remove previously logged-in account
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
+
+            // Save the current account
             if (rememberMe) {
-                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
             } else {
-                sessionStorage.setItem("user", JSON.stringify(data.user));
+                sessionStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
             }
 
             const role = data.user.role_name?.trim().toLowerCase();
 
+            console.log("LOGGED-IN USER:", data.user);
+            console.log("USER ID:", data.user.user_id);
             console.log("USER ROLE:", role);
 
-            
             if (role === "admin") {
                 navigate("/views/admin/AdminDashboard");
             } else if (role === "seller") {
@@ -61,7 +73,11 @@ function Login() {
             } else if (role === "buyer" || role === "customer") {
                 navigate("/views/customer/CustomerDashboard");
             } else {
-                console.log("INVALID ROLE RECEIVED:", data.user.role_name);
+                console.log(
+                    "INVALID ROLE RECEIVED:",
+                    data.user.role_name
+                );
+
                 setError("Invalid user role: " + data.user.role_name);
             }
             
@@ -110,6 +126,18 @@ function Login() {
                 </div>
 
             </header>
+
+            {loading && (
+                <p className="text-center py-6 text-gray-600">
+                    Loading categories and products...
+                </p>
+            )}
+
+            {error && (
+                <p className="text-center py-6 text-red-600">
+                    {error}
+                </p>
+            )}
 
             {/* LOGIN SECTION */}
             <main className="min-h-[calc(100vh-72px)] flex items-center justify-center px-4 py-10">

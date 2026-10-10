@@ -25,6 +25,168 @@ app.get("/users", (req, res) => {
 });
 
 
+app.get("/api/categories", (req, res) => {
+    const sql = `
+        SELECT
+            MIN(category_id) AS category_id,
+            category_name
+        FROM categories
+        WHERE status = 'ACTIVE'
+        GROUP BY category_name
+        ORDER BY MIN(category_id)
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("CATEGORIES MYSQL ERROR:", err);
+            return res.status(500).json({
+                message: "Unable to load categories.",
+                error: err.message
+            });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+
+app.get("/api/products", (req, res) => {
+    const sql = `
+        SELECT
+            p.product_id,
+            p.product_name AS name,
+            p.description,
+            p.brand,
+            p.base_price,
+            COALESCE(
+                MIN(pv.price),
+                p.base_price
+            ) AS price,
+            p.rating,
+            p.total_reviews,
+            p.total_sold AS sold,
+            c.category_name AS category,
+            COALESCE(
+                SUM(
+                    COALESCE(i.quantity, 0) -
+                    COALESCE(i.reserved_quantity, 0)
+                ),
+                0
+            ) AS stock
+        FROM products p
+        INNER JOIN categories c
+            ON p.category_id = c.category_id
+        INNER JOIN shops s
+            ON p.shop_id = s.shop_id
+        LEFT JOIN product_variants pv
+            ON p.product_id = pv.product_id
+            AND pv.status = 'ACTIVE'
+        LEFT JOIN inventory i
+            ON pv.variant_id = i.variant_id
+        WHERE p.status = 'ACTIVE'
+          AND c.status = 'ACTIVE'
+          AND s.status = 'ACTIVE'
+        GROUP BY
+            p.product_id,
+            p.product_name,
+            p.description,
+            p.brand,
+            p.base_price,
+            p.rating,
+            p.total_reviews,
+            p.total_sold,
+            c.category_name
+        ORDER BY p.product_id ASC
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("PRODUCTS MYSQL ERROR:", err);
+            return res.status(500).json({
+                message: "Unable to load products.",
+                error: err.message
+            });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+app.get("/users/:userId", (req, res) => {
+
+    const { userId } = req.params;
+
+    console.log("REQUESTED USER ID:", userId);
+
+    const sql = `
+        SELECT
+            u.user_id,
+            u.username,
+            u.email,
+            u.first_name,
+            u.last_name,
+            u.phone,
+            u.profile_image,
+            u.status,
+            r.role_id,
+            r.role_name
+        FROM users u
+        LEFT JOIN roles r
+            ON u.role_id = r.role_id
+        WHERE u.user_id = ?
+    `;
+
+    db.query(sql, [userId], (err, results) => {
+
+        if (err) {
+
+            console.error(
+                "MYSQL ERROR:",
+                err
+            );
+
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
+
+        }
+
+
+        if (results.length === 0) {
+
+            return res.status(404).json({
+                message: "User not found"
+            });
+
+        }
+
+
+        const user = results[0];
+
+
+        return res.status(200).json({
+
+            user: {
+                user_id: user.user_id,
+                username: user.username,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                phone: user.phone,
+                profile_image: user.profile_image,
+                status: user.status,
+                role_id: user.role_id,
+                role_name: user.role_name
+            }
+
+        });
+
+    });
+
+});
+
+
 app.post("/login", (req, res) => {
     console.log("=================================");
     console.log("LOGIN REQUEST RECEIVED");
