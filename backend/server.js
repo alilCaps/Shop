@@ -186,6 +186,113 @@ app.get("/users/:userId", (req, res) => {
 
 });
 
+app.put("/users/:userId", async (req, res) => {
+    const userId = Number(req.params.userId);
+
+    const {
+        first_name,
+        last_name,
+        phone,
+        profile_image
+    } = req.body;
+
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+        return res.status(400).json({
+            message: "Invalid user ID."
+        });
+    }
+
+    if (
+        typeof first_name !== "string" ||
+        typeof last_name !== "string" ||
+        typeof phone !== "string" ||
+        typeof profile_image !== "string"
+    ) {
+        return res.status(400).json({
+            message: "Invalid profile information."
+        });
+    }
+
+    if (
+        first_name.length > 100 ||
+        last_name.length > 100 ||
+        phone.length > 30 ||
+        profile_image.length > 2048
+    ) {
+        return res.status(400).json({
+            message: "One or more fields exceed the allowed length."
+        });
+    }
+
+    try {
+        const sql = `
+            UPDATE users
+            SET
+                first_name = ?,
+                last_name = ?,
+                phone = ?,
+                profile_image = ?
+            WHERE user_id = ?
+        `;
+
+        db.query(
+            sql,
+            [
+                first_name.trim() || null,
+                last_name.trim() || null,
+                phone.trim() || null,
+                profile_image.trim() || null,
+                userId
+            ],
+            (error, result) => {
+                if (error) {
+                    console.error("Profile update error:", error);
+
+                    return res.status(500).json({
+                        message: "Unable to update profile."
+                    });
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        message: "User not found or no changes were made."
+                    });
+                }
+
+                db.query(
+                    `SELECT user_id, first_name, last_name, username,
+                            email, phone, profile_image
+                     FROM users
+                     WHERE user_id = ?`,
+                    [userId],
+                    (selectError, rows) => {
+                        if (selectError) {
+                            console.error(
+                                "Updated profile retrieval error:",
+                                selectError
+                            );
+
+                            return res.status(500).json({
+                                message: "Profile saved, but could not retrieve updated information."
+                            });
+                        }
+
+                        return res.status(200).json({
+                            message: "Profile updated successfully.",
+                            user: rows[0]
+                        });
+                    }
+                );
+            }
+        );
+    } catch (error) {
+        console.error("Profile update error:", error);
+
+        return res.status(500).json({
+            message: "An unexpected error occurred."
+        });
+    }
+});
 
 app.post("/login", (req, res) => {
     console.log("=================================");

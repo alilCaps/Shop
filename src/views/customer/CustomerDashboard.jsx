@@ -1,3 +1,5 @@
+import logo from "../../assets/logo/orange_logo.png";
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomerSidebar from "./components/CustomerSidebar";
@@ -23,9 +25,7 @@ function CustomerDashboard() {
         let cancelled = false;
 
         async function loadDashboard() {
-            const storedUser =
-                localStorage.getItem("user") ||
-                sessionStorage.getItem("user");
+            const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
 
             if (!storedUser) {
                 navigate("/login");
@@ -248,12 +248,13 @@ function CustomerDashboard() {
         });
     };
 
+    {/* Loading State */} 
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="text-[#EE4D2D] text-2xl font-semibold">
-                        Shopee
+                    <div className="w-45 flex justify-center items-center">
+                        <img src={logo} alt="Shopee Logo" className="w-35 h-auto object-contain"/>
                     </div>
                     <p className="text-gray-500 text-sm mt-2">
                         Loading your account...
@@ -316,13 +317,9 @@ function CustomerDashboard() {
                         to="/"
                         className="flex items-center gap-2 shrink-0"
                     >
-                        <div className="w-9 h-9 rounded-lg bg-[#EE4D2D] text-white flex items-center justify-center text-xl">
-                            🛍
+                        <div className="w-45 flex justify-center items-center">
+                            <img src={logo} alt="Shopee Logo" className="w-35 h-auto object-contain"/>
                         </div>
-
-                        <span className="text-2xl font-semibold text-[#EE4D2D]">
-                            Shopee
-                        </span>
                     </Link>
 
                     <div className="flex-1 max-w-162.5">
@@ -373,7 +370,7 @@ function CustomerDashboard() {
 
             {/* DASHBOARD */}
             <main className="max-w-300 mx-auto px-4 py-6">
-                <div className="grid grid-cols-1 lg:grid-cols-[192px_1fr] gap-5">
+                <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[192px_minmax(0,1fr)]">
                     {/* SIDEBAR */}
                     <CustomerSidebar
                         user={user}

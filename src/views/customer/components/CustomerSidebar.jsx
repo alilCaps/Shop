@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 function CustomerSidebar({
@@ -9,7 +8,7 @@ function CustomerSidebar({
     onLogout
 }) {
     const menuItems = [
-        { name: "Account overview", icon: "▦", path: "/customer/customerDashboard" },
+        { name: "Account overview", icon: "▦", path: "/customer/dashboard" },
         { name: "My profile", icon: "♙", path: "/customer/profile" },
         { name: "My orders", icon: "□", path: "/customer/orders" },
         { name: "Wishlist", icon: "♡", path: "/customer/wishlist" },
@@ -18,7 +17,7 @@ function CustomerSidebar({
     ];
 
     return (
-        <aside className="bg-white rounded-lg shadow-sm h-fit overflow-hidden">
+        <aside className="box-border w-full min-w-0 self-start overflow-hidden rounded-lg bg-white shadow-sm lg:w-48 lg:min-w-48 lg:max-w-48">
             {/* PROFILE */}
             <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center gap-3">
