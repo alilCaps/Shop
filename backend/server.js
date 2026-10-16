@@ -7,6 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const customerRoutes = require("./routes/customerRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 const PORT = 5000;
@@ -26,6 +27,7 @@ app.use("/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customer", customerRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Handle unknown endpoints
 app.use((req, res) => {
