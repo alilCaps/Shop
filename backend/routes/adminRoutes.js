@@ -27,4 +27,25 @@ router.put("/categories/:categoryId", adminController.updateCategory);
 router.get("/products", adminController.getProducts);
 router.put("/products/:productId", adminController.updateProduct);
 
+// Orders
+router.get("/orders", adminController.getOrders);
+router.put("/orders/:orderId", adminController.updateOrder);
+
+// Reviews
+router.get("/reviews", adminController.getReviews);
+router.put("/reviews/:reviewId", adminController.updateReview);
+
+// Notifications
+router.get("/notifications", adminController.getNotifications);
+router.put(
+  "/notifications/:notificationId",
+  adminController.updateNotification
+);
+
+// Activity logs (read-only)
+router.get("/activity-logs", adminController.getActivityLogs);
+
+// Reports
+router.get("/reports", adminController.getReports);
+
 module.exports = router;

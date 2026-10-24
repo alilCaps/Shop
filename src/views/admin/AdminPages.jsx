@@ -114,14 +114,15 @@ const pageConfigs = {
     description: "Monitor marketplace orders and their progress.",
     showStatusFilter: true,
     columns: [
-      { key: "order_id", label: "Order ID" },
+      { key: "order_number", label: "Order Number" },
       { key: "customer_name", label: "Customer" },
+      { key: "item_count", label: "Items" },
       { key: "total_amount", label: "Total Amount" },
-      { key: "payment_status", label: "Payment" },
       { key: "status", label: "Order Status", type: "status" },
+      { key: "placed_at", label: "Date Ordered" },
     ],
     editableFields: [
-      { key: "status", label: "Order status" },
+      { key: "status", label: "Order status (use a valid order status)" },
     ],
   },
 
@@ -153,9 +154,15 @@ const pageConfigs = {
       { key: "customer_name", label: "Customer" },
       { key: "product_name", label: "Product" },
       { key: "rating", label: "Rating" },
-      { key: "comment", label: "Comment" },
+      { key: "review_text", label: "Review" },
       { key: "status", label: "Status", type: "status" },
     ],
+    idKey: "review_id",
+    editableFields: [
+    {
+      key: "status", label: "Status (VISIBLE, HIDDEN, or REMOVED)",
+    },
+    ],  
   },
 
   reports: {
@@ -180,24 +187,27 @@ const pageConfigs = {
     showStatusFilter: true,
     columns: [
       { key: "notification_id", label: "ID" },
+      { key: "user_name", label: "User" },
       { key: "title", label: "Title" },
-      { key: "message", label: "Message" },
-      { key: "status", label: "Status", type: "status" },
+      { key: "notification_type", label: "Type" },
+      { key: "is_read", label: "Read" },
       { key: "created_at", label: "Created At" },
     ],
+    idKey: "notification_id",
   },
 
   "activity-logs": {
     resource: "activity-logs",
-    idKey: "log_id",
+    idKey: "audit_id",
     title: "Activity Logs",
     singularLabel: "Activity Log",
     description: "Review recorded administrative and system activities.",
     columns: [
-      { key: "log_id", label: "Log ID" },
+      { key: "audit_id", label: "Audit ID" },
       { key: "user_name", label: "User" },
       { key: "action", label: "Action" },
-      { key: "description", label: "Description" },
+      { key: "table_name", label: "Table" },
+      { key: "record_id", label: "Record ID" },
       { key: "created_at", label: "Date" },
     ],
   },
