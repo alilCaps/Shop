@@ -949,3 +949,146 @@ exports.getReports = async (req, res) => {
     return sendDatabaseError(res, error);
   }
 };
+
+// --------------------------------------------------
+// TRANSACTIONS
+// GET /api/admin/transactions
+// PUT /api/admin/transactions/:paymentId
+// --------------------------------------------------
+
+const PAYMENT_STATUSES = [
+  "PENDING",
+  "PROCESSING",
+  "PAID",
+  "FAILED",
+  "REFUNDED",
+];
+
+const PAYMENT_METHODS = [
+  "CASH_ON_DELIVERY",
+  "GCASH",
+  "MAYA",
+  "BANK_TRANSFER",
+  "CREDIT_CARD",
+  "DEBIT_CARD",
+  "OTHER",
+];
+
+exports.getTransactions = async (req, res) => {
+  try {
+    const rows = await query(`
+      SELECT
+        p.payment_id,
+        p.order_id,
+        o.order_number,
+        o.user_id,
+        CONCAT_WS(' ', u.first_name, u.last_name) AS customer_name,
+        p.payment_method,
+        p.transaction_reference,
+        p.amount,
+        p.status,
+        p.paid_at,
+        p.created_at
+      FROM payments p
+      INNER JOIN orders o ON o.order_id = p.order_id
+      INNER JOIN users u ON u.user_id = o.user_id
+      ORDER BY p.created_at DESC
+    `);
+
+    return res.json({ data: rows });
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
+};
+
+exports.updateTransaction = async (req, res) => {
+  const { paymentId } = req.params;
+  const body = req.body;
+
+  if (!validId(paymentId)) {
+    return res.status(400).json({
+      message: "Invalid payment ID.",
+    });
+  }
+
+  const updates = {};
+
+  if (body.status !== undefined) {
+    const status = normalizeStatus(body.status);
+
+    if (!PAYMENT_STATUSES.includes(status)) {
+      return res.status(400).json({
+        message: `Status must be one of: ${PAYMENT_STATUSES.join(", ")}.`,
+      });
+    }
+
+    updates.status = status;
+  }
+
+  if (body.payment_method !== undefined) {
+    const method = normalizeStatus(body.payment_method);
+
+    if (!PAYMENT_METHODS.includes(method)) {
+      return res.status(400).json({
+        message: `Payment method must be one of: ${PAYMENT_METHODS.join(", ")}.`,
+      });
+    }
+
+    updates.payment_method = method;
+  }
+
+  if (body.transaction_reference !== undefined) {
+    if (
+      body.transaction_reference !== null &&
+      typeof body.transaction_reference !== "string"
+    ) {
+      return res.status(400).json({
+        message: "Transaction reference must be a string or null.",
+      });
+    }
+
+    updates.transaction_reference =
+      body.transaction_reference?.trim() || null;
+  }
+
+  const fields = [];
+  const values = buildUpdate(fields, updates, [
+    "status",
+    "payment_method",
+    "transaction_reference",
+  ]);
+
+  if (fields.length === 0) {
+    return res.status(400).json({
+      message: "Provide at least one valid field to update.",
+    });
+  }
+
+  try {
+    const existing = await query(
+      "SELECT payment_id, status FROM payments WHERE payment_id = ?",
+      [Number(paymentId)]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({
+        message: "Transaction not found.",
+      });
+    }
+
+    if (updates.status === "PAID") {
+      fields.push("paid_at = COALESCE(paid_at, CURRENT_TIMESTAMP)");
+    }
+
+    await query(
+      `UPDATE payments SET ${fields.join(", ")} WHERE payment_id = ?`,
+      [...values, Number(paymentId)]
+    );
+
+    return res.json({
+      message: "Transaction updated successfully.",
+    });
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
+};

@@ -48,4 +48,8 @@ router.get("/activity-logs", adminController.getActivityLogs);
 // Reports
 router.get("/reports", adminController.getReports);
 
+// Transactions
+router.get("/transactions", adminController.getTransactions);
+router.put("/transactions/:paymentId", adminController.updateTransaction);
+
 module.exports = router;
