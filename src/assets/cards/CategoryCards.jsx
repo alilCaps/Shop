@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom";
+
 function CategoryCard({ category, image }) {
     return (
-        <a
-            href="#"
+        <Link
+            to={`/search?category=${encodeURIComponent(category)}`}
             className="flex flex-col items-center justify-center py-6 border-r border-b hover:shadow-md"
         >
             <div className="w-12 h-12 flex items-center justify-center">
@@ -15,7 +17,7 @@ function CategoryCard({ category, image }) {
             <span className="text-xs text-center mt-3 px-2">
                 {category}
             </span>
-        </a>
+        </Link>
     );
 }
 

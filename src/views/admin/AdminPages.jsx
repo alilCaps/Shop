@@ -157,7 +157,6 @@ const pageConfigs = {
       { key: "review_text", label: "Review" },
       { key: "status", label: "Status", type: "status" },
     ],
-    idKey: "review_id",
     editableFields: [
     {
       key: "status", label: "Status (VISIBLE, HIDDEN, or REMOVED)",
@@ -193,7 +192,6 @@ const pageConfigs = {
       { key: "is_read", label: "Read" },
       { key: "created_at", label: "Created At" },
     ],
-    idKey: "notification_id",
   },
 
   "activity-logs": {

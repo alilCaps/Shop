@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 function FlashSaleCard({ product }) {
     return (
-        <div className="bg-white p-3 hover:shadow-lg cursor-pointer">
+        <Link to={`/product/${product.product_id}`} className="block bg-white p-3 hover:shadow-lg">
             <div className="h-40 relative bg-white flex items-center justify-center">
                 <img
                     src={product.image}
@@ -33,7 +35,7 @@ function FlashSaleCard({ product }) {
                     🔥 {product.status}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 

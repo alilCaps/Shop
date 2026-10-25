@@ -1,6 +1,6 @@
 import logo from "./assets/logo/white_logo.png";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import CategoryCard from "./assets/cards/CategoryCards.jsx";
@@ -37,6 +37,8 @@ import storageBox from "./assets/foldable-storage-box.jpg";
 
 
 function LandingPage() {
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState("");
     const [categories, setCategories] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -159,8 +161,8 @@ function LandingPage() {
                     {/* LEFT LINKS */}
                     <div>
                         <ol className="flex gap-5 list-none p-0 m-0 text-sm">
-                            <li><a href="#" className="hover:opacity-70">Seller Center</a></li>
-                            <li><a href="#" className="hover:opacity-70">Start Selling</a></li>
+                            <li><Link to="/seller/dashboard" className="hover:opacity-70">Seller Center</Link></li>
+                            <li><Link to="/signup" className="hover:opacity-70">Start Selling</Link></li>
                             <li><a href="#" className="hover:opacity-70">Download</a></li>
                             <li><a href="#" className="hover:opacity-70">Follow us on</a></li>
                         </ol>
@@ -188,20 +190,27 @@ function LandingPage() {
 
                     {/* Seach */}
                     <div className="min-w-0">
-                        <div className="h-12 rounded-sm bg-white flex items-center overflow-hidden">
-                            <input type="text" placeholder="Search" className="flex-1 h-full px-4 text-gray-700 outline-none"/>
-                            <button className="h-10 w-14 mr-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600">🔍</button>
-                        </div>
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                const term = searchTerm.trim();
+                                navigate(term ? `/search?q=${encodeURIComponent(term)}` : "/search");
+                            }}
+                            className="h-12 rounded-sm bg-white flex items-center overflow-hidden"
+                        >
+                            <input type="text" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search" aria-label="Search products" className="flex-1 h-full px-4 text-gray-700 outline-none"/>
+                            <button type="submit" aria-label="Search" className="h-10 w-14 mr-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600">🔍</button>
+                        </form>
 
 
                         {/* Seach suggestions */}
                         <div className="overflow-hidden">
                             <ol className="flex flex-nowrap gap-6 list-none p-0 mt-2 text-xs text-white whitespace-nowrap">
-                                <li><a href="#" className="hover:underline">Moving Rack Organizer</a></li>
-                                <li><a href="#" className="hover:underline">Pants Oversize</a></li>
-                                <li><a href="#" className="hover:underline">Trend T-Shirt</a></li>
-                                <li><a href="#" className="hover:underline">Eyeglasses</a></li>
-                                <li><a href="#" className="hover:underline">Double Mattress Foam</a></li>
+                                <li><Link to="/search?q=Moving%20Rack%20Organizer" className="hover:underline">Moving Rack Organizer</Link></li>
+                                <li><Link to="/search?q=Pants%20Oversize" className="hover:underline">Pants Oversize</Link></li>
+                                <li><Link to="/search?q=Trend%20T-Shirt" className="hover:underline">Trend T-Shirt</Link></li>
+                                <li><Link to="/search?q=Eyeglasses" className="hover:underline">Eyeglasses</Link></li>
+                                <li><Link to="/search?q=Double%20Mattress%20Foam" className="hover:underline">Double Mattress Foam</Link></li>
                             </ol>
                         </div>
                     </div>
@@ -209,7 +218,7 @@ function LandingPage() {
 
                     {/* Cart */}
                     <div className="flex items-center justify-center">
-                        <a href="#" className="text-4xl hover:opacity-70">🛒</a>
+                        <Link to="/customer/cart" aria-label="Shopping cart" className="text-4xl hover:opacity-70">🛒</Link>
                     </div>
 
                 </div>
@@ -232,7 +241,7 @@ function LandingPage() {
 
                             {categories.map((category, index) => (
                                 <li key={index}>
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500">{category}</a>
+                                    <Link to={`/search?category=${encodeURIComponent(category)}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500">{category}</Link>
                                 </li>
                             ))}
                         </ul>
@@ -248,7 +257,7 @@ function LandingPage() {
                             <p className="text-lg">SHOPEE SUPER SALE</p>
                             <h1 className="text-5xl font-bold mt-2">UP TO 70% OFF</h1>
                             <p className="text-xl mt-4">Big discounts on your favorite products</p>
-                            <button className="mt-6 bg-white text-orange-500 w-40 py-3 rounded-sm font-semibold hover:bg-gray-100">SHOP NOW</button>
+                            <Link to="/search" className="mt-6 block bg-white text-orange-500 w-40 py-3 rounded-sm text-center font-semibold hover:bg-gray-100">SHOP NOW</Link>
 
                         </div>
 
@@ -301,7 +310,7 @@ function LandingPage() {
 
                     <div className="px-6 py-4 border-b flex justify-between items-center">
                         <h2 className="text-xl text-orange-500 font-semibold">FLASH SALE</h2>
-                        <a href="#" className="text-sm text-orange-500 hover:underline">View All</a>
+                        <Link to="/search" className="text-sm text-orange-500 hover:underline">View All</Link>
                     </div>
 
 

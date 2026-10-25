@@ -19,6 +19,12 @@ async function query(sql, values = []) {
 function sendDatabaseError(res, error) {
   console.error("Admin controller error:", error.message);
 
+  if (error.code === "ER_DUP_ENTRY") {
+    return res.status(409).json({
+      message: "That value already exists. Choose a different one.",
+    });
+  }
+
   return res.status(500).json({
     message: "Unable to process the request.",
   });
@@ -53,29 +59,60 @@ function buildUpdate(fields, body, allowedFields) {
 // --------------------------------------------------
 exports.getAdminOverview = async (req, res) => {
   try {
-    const [users, sellers, shops, categories, products, orders] =
-      await Promise.all([
-        query("SELECT COUNT(*) AS total FROM users"),
-        query(`
-          SELECT COUNT(*) AS total
-          FROM users u
-          INNER JOIN roles r ON r.role_id = u.role_id
-          WHERE UPPER(r.role_name) = 'SELLER'
-        `),
-        query("SELECT COUNT(*) AS total FROM shops"),
-        query("SELECT COUNT(*) AS total FROM categories"),
-        query("SELECT COUNT(*) AS total FROM products"),
-        query("SELECT COUNT(*) AS total FROM orders"),
-      ]);
+    const count = async (sql) => (await query(sql))[0].total;
+
+    const [
+      users,
+      customers,
+      sellers,
+      shops,
+      pendingShops,
+      categories,
+      products,
+      orders,
+      toShip,
+    ] = await Promise.all([
+      count("SELECT COUNT(*) AS total FROM users"),
+      count(`
+        SELECT COUNT(*) AS total
+        FROM users u
+        INNER JOIN roles r ON r.role_id = u.role_id
+        WHERE UPPER(r.role_name) = 'CUSTOMER'
+      `),
+      count(`
+        SELECT COUNT(*) AS total
+        FROM users u
+        INNER JOIN roles r ON r.role_id = u.role_id
+        WHERE UPPER(r.role_name) = 'SELLER'
+      `),
+      count("SELECT COUNT(*) AS total FROM shops"),
+      count("SELECT COUNT(*) AS total FROM shops WHERE status = 'PENDING'"),
+      count("SELECT COUNT(*) AS total FROM categories"),
+      count("SELECT COUNT(*) AS total FROM products"),
+      count("SELECT COUNT(*) AS total FROM orders"),
+      count(
+        "SELECT COUNT(*) AS total FROM orders WHERE status IN ('PAID', 'PROCESSING')"
+      ),
+    ]);
+
+    const revenueRows = await query(`
+      SELECT COALESCE(SUM(total_amount), 0) AS revenue
+      FROM orders
+      WHERE status IN ('PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'COMPLETED')
+    `);
 
     return res.json({
       data: {
-        users: users[0].total,
-        sellers: sellers[0].total,
-        shops: shops[0].total,
-        categories: categories[0].total,
-        products: products[0].total,
-        orders: orders[0].total,
+        users,
+        customers,
+        sellers,
+        shops,
+        pending_shops: pendingShops,
+        categories,
+        products,
+        orders,
+        to_ship: toShip,
+        revenue: Number(revenueRows[0].revenue),
       },
     });
   } catch (error) {

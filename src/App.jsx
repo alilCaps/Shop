@@ -5,10 +5,25 @@ import LandingPage from "./LandingPage.jsx";
 import Login from "./Login.jsx";
 import Signup from "./SignUp.jsx";
 
+import ProductSearch from "./views/store/ProductSearch.jsx";
+import ProductDetail from "./views/store/ProductDetail.jsx";
+import Cart from "./views/store/Cart.jsx";
+import Checkout from "./views/store/Checkout.jsx";
+
+import SellerLayout from "./components/seller/SellerLayout.jsx";
 import SellerDashboard from "./views/seller/SellerDashboard.jsx";
+import SellerShop from "./views/seller/SellerShop.jsx";
+import SellerProducts from "./views/seller/SellerProducts.jsx";
+import SellerOrders from "./views/seller/SellerOrders.jsx";
+import SellerNotifications from "./views/seller/SellerNotifications.jsx";
+
 import CustomerDashboard from "./views/customer/CustomerDashboard.jsx";
 import CustomerProfile from "./views/customer/CustomerProfile.jsx";
-import MyOrders from "./views/customer/CutomerOrder.jsx";
+import MyOrders from "./views/customer/CustomerOrders.jsx";
+import CustomerWishlist from "./views/customer/CustomerWishlist.jsx";
+import CustomerAddresses from "./views/customer/CustomerAddresses.jsx";
+import CustomerPayments from "./views/customer/CustomerPayments.jsx";
+import CustomerNotifications from "./views/customer/CustomerNotifications.jsx";
 
 import AdminLayout from "./components/admin/AdminLayout.jsx";
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
@@ -36,16 +51,34 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Seller */}
+      {/* Storefront */}
+      <Route path="/search" element={<ProductSearch />} />
+      <Route path="/product/:productId" element={<ProductDetail />} />
+
+      {/* Seller Centre */}
+      <Route path="/seller" element={<SellerLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<SellerDashboard />} />
+        <Route path="shop" element={<SellerShop />} />
+        <Route path="products" element={<SellerProducts />} />
+        <Route path="orders" element={<SellerOrders />} />
+        <Route path="notifications" element={<SellerNotifications />} />
+      </Route>
       <Route
         path="/views/seller/SellerDashboard"
-        element={<SellerDashboard />}
+        element={<Navigate to="/seller/dashboard" replace />}
       />
 
       {/* Customer */}
       <Route path="/customer/dashboard" element={<CustomerDashboard />} />
       <Route path="/customer/profile" element={<CustomerProfile />} />
       <Route path="/customer/orders" element={<MyOrders />} />
+      <Route path="/customer/wishlist" element={<CustomerWishlist />} />
+      <Route path="/customer/addresses" element={<CustomerAddresses />} />
+      <Route path="/customer/payments" element={<CustomerPayments />} />
+      <Route path="/customer/notifications" element={<CustomerNotifications />} />
+      <Route path="/customer/cart" element={<Cart />} />
+      <Route path="/customer/checkout" element={<Checkout />} />
 
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>

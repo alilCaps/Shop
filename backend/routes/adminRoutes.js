@@ -3,6 +3,11 @@ const express = require("express");
 const router = express.Router();
 
 const adminController = require("../controllers/adminController");
+const adminExtra = require("../controllers/adminExtraController");
+const { authenticate, requireRole } = require("../utils/auth");
+
+// Everything under /api/admin needs an administrator token.
+router.use(authenticate, requireRole("ADMIN"));
 
 // Dashboard overview
 router.get("/overview", adminController.getAdminOverview);
@@ -27,9 +32,9 @@ router.put("/categories/:categoryId", adminController.updateCategory);
 router.get("/products", adminController.getProducts);
 router.put("/products/:productId", adminController.updateProduct);
 
-// Orders
+// Orders (update also keeps stock / payments / shipments in sync)
 router.get("/orders", adminController.getOrders);
-router.put("/orders/:orderId", adminController.updateOrder);
+router.put("/orders/:orderId", adminExtra.updateOrder);
 
 // Reviews
 router.get("/reviews", adminController.getReviews);
@@ -51,5 +56,9 @@ router.get("/reports", adminController.getReports);
 // Transactions
 router.get("/transactions", adminController.getTransactions);
 router.put("/transactions/:paymentId", adminController.updateTransaction);
+
+// System settings
+router.get("/settings", adminExtra.getSettings);
+router.put("/settings/:settingId", adminExtra.updateSetting);
 
 module.exports = router;
