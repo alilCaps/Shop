@@ -11,6 +11,7 @@ function CustomerSidebar({
         { name: "Account overview", icon: "▦", path: "/customer/dashboard" },
         { name: "My profile", icon: "♙", path: "/customer/profile" },
         { name: "My orders", icon: "□", path: "/customer/orders" },
+        { name: "Notifications", icon: "🔔", path: "/customer/notifications" },
         { name: "Wishlist", icon: "♡", path: "/customer/wishlist" },
         { name: "Addresses", icon: "⌖", path: "/customer/addresses" },
         { name: "Payments", icon: "▤", path: "/customer/payments" }

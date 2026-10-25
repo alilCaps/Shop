@@ -14,6 +14,7 @@ function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [accountType, setAccountType] = useState("customer");
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -44,13 +45,12 @@ function SignUp() {
                     phone: phone,
                     username: username,
                     email: email,
-                    password: password
+                    password: password,
+                    account_type: accountType
                 })
             });
 
             const data = await response.json();
-
-            console.log("SIGNUP RESPONSE:", data);
 
             if (!response.ok) {
 
@@ -67,6 +67,7 @@ function SignUp() {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
+            setAccountType("customer");
 
             // Go to login after successful signup
             setTimeout(() => {
@@ -312,6 +313,33 @@ function SignUp() {
 
                             </div>
 
+
+                            {/* Account type */}
+                            <fieldset className="mb-4 flex gap-6 text-sm text-gray-700">
+                                <legend className="sr-only">Account type</legend>
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="accountType"
+                                        value="customer"
+                                        checked={accountType === "customer"}
+                                        onChange={() => setAccountType("customer")}
+                                        className="accent-[#EE4D2D]"
+                                    />
+                                    I want to shop
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="accountType"
+                                        value="seller"
+                                        checked={accountType === "seller"}
+                                        onChange={() => setAccountType("seller")}
+                                        className="accent-[#EE4D2D]"
+                                    />
+                                    I want to sell
+                                </label>
+                            </fieldset>
 
                             {/* Sign Up Button */}
                             <button

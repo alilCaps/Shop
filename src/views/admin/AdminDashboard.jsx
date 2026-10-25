@@ -1,15 +1,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const API = "http://localhost:5000";
-
-function getList(data, key) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.[key])) return data[key];
-  if (Array.isArray(data?.data)) return data.data;
-  return [];
-}
+import { adminService } from "../../services/adminService.js";
+import { formatCurrency } from "../../utils/format.js";
 
 function StatCard({ title, value, icon, description, loading }) {
   return (
@@ -31,13 +24,7 @@ function StatCard({ title, value, icon, description, loading }) {
 }
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    users: 0,
-    customers: 0,
-    sellers: 0,
-    products: 0,
-    categories: 0,
-  });
+  const [stats, setStats] = useState({});
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,45 +34,8 @@ export default function AdminDashboard() {
     setError("");
 
     try {
-      const endpoints = [
-        { key: "users", url: `${API}/users` },
-        { key: "products", url: `${API}/api/products` },
-        { key: "categories", url: `${API}/api/categories` },
-      ];
-
-      const results = await Promise.all(
-        endpoints.map(async ({ key, url }) => {
-          const response = await fetch(url);
-
-          if (!response.ok) {
-            throw new Error(
-              `Could not load ${key}. Server returned ${response.status}.`
-            );
-          }
-
-          return { key, data: await response.json() };
-        })
-      );
-
-      const data = Object.fromEntries(
-        results.map(({ key, data }) => [key, data])
-      );
-
-      const users = getList(data.users, "users");
-      const products = getList(data.products, "products");
-      const categories = getList(data.categories, "categories");
-
-      setStats({
-        users: users.length,
-        customers: users.filter(
-          (user) => user.role_name?.toLowerCase() === "customer"
-        ).length,
-        sellers: users.filter(
-          (user) => user.role_name?.toLowerCase() === "seller"
-        ).length,
-        products: products.length,
-        categories: categories.length,
-      });
+      const result = await adminService.getOverview();
+      setStats(result.data || {});
     } catch (err) {
       setError(
         err.message ||
@@ -166,45 +116,45 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
           title="Total Users"
-          value={stats.users.toLocaleString()}
+          value={Number(stats.users || 0).toLocaleString()}
           icon="♙"
-          description="All returned user records"
+          description="All registered accounts"
           loading={loading}
         />
         <StatCard
           title="Customers"
-          value={stats.customers.toLocaleString()}
+          value={Number(stats.customers || 0).toLocaleString()}
           icon="♧"
           description="Accounts with the Customer role"
           loading={loading}
         />
         <StatCard
           title="Sellers"
-          value={stats.sellers.toLocaleString()}
+          value={Number(stats.sellers || 0).toLocaleString()}
           icon="⌂"
-          description="Accounts with the Seller role"
+          description={`${Number(stats.pending_shops || 0)} shop(s) waiting for approval`}
           loading={loading}
         />
         <StatCard
           title="Products"
-          value={stats.products.toLocaleString()}
+          value={Number(stats.products || 0).toLocaleString()}
           icon="□"
-          description="Products returned by the API"
+          description={`${Number(stats.categories || 0)} categories`}
           loading={loading}
         />
         <StatCard
-          title="Categories"
-          value={stats.categories.toLocaleString()}
-          icon="▤"
-          description="Categories returned by the API"
+          title="Orders"
+          value={Number(stats.orders || 0).toLocaleString()}
+          icon="▣"
+          description={`${Number(stats.to_ship || 0)} waiting to be shipped`}
           loading={loading}
         />
         <StatCard
-          title="Orders & Revenue"
-          value="Not connected"
+          title="Revenue"
+          value={formatCurrency(stats.revenue)}
           icon="₱"
-          description="Requires an admin statistics API"
-          loading={false}
+          description="Paid, shipped and completed orders"
+          loading={loading}
         />
       </div>
 
@@ -242,16 +192,6 @@ export default function AdminDashboard() {
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="rounded-xl border border-orange-100 bg-white p-5 shadow-sm">
-        <h2 className="font-bold text-gray-800">Dashboard data status</h2>
-        <p className="mt-2 text-sm leading-6 text-gray-600">
-          User, product, and category counts come from your existing backend
-          APIs. Order statistics, sales totals, and revenue are not displayed
-          because the current backend does not provide a dedicated admin
-          statistics endpoint for them yet.
-        </p>
       </section>
     </div>
   );

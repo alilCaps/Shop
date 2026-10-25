@@ -1,50 +1,30 @@
+import { api } from "./api";
 
-const API_BASE_URL = "http://localhost:5000";
-
-async function request(endpoint, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.message || "Request failed.");
-  }
-
-  return data;
-}
-
+// Thin wrapper over api() so every admin call carries the login token.
 export const adminService = {
   getOverview() {
-    return request("/api/admin/overview");
+    return api("/api/admin/overview");
   },
 
   getResource(resource) {
-    return request(`/api/admin/${resource}`);
+    return api(`/api/admin/${resource}`);
   },
 
   updateResource(resource, id, payload) {
-    return request(`/api/admin/${resource}/${id}`, {
+    return api(`/api/admin/${resource}/${id}`, {
       method: "PUT",
-      body: JSON.stringify(payload),
+      body: payload,
     });
   },
 
   createResource(resource, payload) {
-    return request(`/api/admin/${resource}`, {
+    return api(`/api/admin/${resource}`, {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: payload,
     });
   },
 
   deleteResource(resource, id) {
-    return request(`/api/admin/${resource}/${id}`, {
-      method: "DELETE",
-    });
+    return api(`/api/admin/${resource}/${id}`, { method: "DELETE" });
   },
 };

@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
+const { createToken } = require("../utils/auth");
 
 // LOGIN
 const login = (req, res) => {
@@ -65,9 +66,16 @@ const login = (req, res) => {
                 });
             }
 
+            db.query(
+                "UPDATE users SET last_login_at = NOW() WHERE user_id = ?",
+                [user.user_id],
+                () => {}
+            );
+
             return res.status(200).json({
                 message: "Login successful",
                 user: {
+                    token: createToken(user),
                     user_id: user.user_id,
                     username: user.username,
                     email: user.email,
@@ -132,14 +140,20 @@ const signup = async (req, res) => {
                         10
                     );
 
+                    // Only customers and sellers can self-register.
+                    const wantedRole =
+                        req.body.account_type === "seller"
+                            ? "seller"
+                            : "customer";
+
                     const roleSql = `
                         SELECT role_id
                         FROM roles
-                        WHERE LOWER(role_name) = 'customer'
+                        WHERE LOWER(role_name) = ?
                         LIMIT 1
                     `;
 
-                    db.query(roleSql, (roleErr, roleResults) => {
+                    db.query(roleSql, [wantedRole], (roleErr, roleResults) => {
                         if (roleErr) {
                             console.error("ROLE QUERY ERROR:", roleErr);
 

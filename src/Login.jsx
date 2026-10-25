@@ -3,6 +3,7 @@ import fb_icon from "./assets/icons/facebook_icon.png";
 import g_icon from "./assets/icons/google_icon.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { homeFor } from "./services/api";
 
 function Login() {
     const navigate = useNavigate();
@@ -29,9 +30,6 @@ function Login() {
             });
 
             const data = await response.json();
-
-            console.log("SERVER RESPONSE:", data);
-            console.log("ROLE:", data.user?.role_name);
 
             if (!response.ok) {
                 setError(data.message || "Login failed.");
@@ -60,28 +58,14 @@ function Login() {
                 );
             }
 
-            const role = data.user.role_name?.trim().toLowerCase();
+            const destination = homeFor(data.user);
 
-            console.log("LOGGED-IN USER:", data.user);
-            console.log("USER ID:", data.user.user_id);
-            console.log("USER ROLE:", role);
-
-            if (role === "admin") {
-                navigate("/views/admin/AdminDashboard");
-            } else if (role === "seller") {
-                navigate("/views/seller/SellerDashboard");
-            } else if (role === "buyer" || role === "customer") {
-                navigate("/views/customer/CustomerDashboard");
-            } else {
-                console.log(
-                    "INVALID ROLE RECEIVED:",
-                    data.user.role_name
-                );
-
+            if (destination === "/login") {
                 setError("Invalid user role: " + data.user.role_name);
+                return;
             }
-            
 
+            navigate(destination, { replace: true });
 
         } catch (error) {
             console.error("LOGIN ERROR:", error);
@@ -90,12 +74,10 @@ function Login() {
     };
 
     const handleGoogleLogin = () => {
-        console.log("Google Login clicked");
         setError("Google login is not configured yet.");
     };
 
     const handleFacebookLogin = () => {
-        console.log("Facebook Login clicked");
         setError("Facebook login is not configured yet.");
     };
 

@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 function DiscoverCard({ product }) {
     return (
-        <div className="bg-white hover:shadow-lg cursor-pointer">
+        <Link to={`/product/${product.product_id}`} className="block bg-white hover:shadow-lg">
             <div className="h-52 bg-white flex items-center justify-center">
                 <img
                     src={product.image}
@@ -28,7 +30,7 @@ function DiscoverCard({ product }) {
                     </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 
