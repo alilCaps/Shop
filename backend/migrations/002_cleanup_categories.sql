@@ -2,6 +2,11 @@
 -- Run once:  mysql -u root -p shopee_db < backend/migrations/002_cleanup_categories.sql
 -- Safe to re-run.
 
+-- MySQL Workbench's "safe update mode" rejects UPDATE/DELETE statements that have no
+-- key in their WHERE clause (error 1175). Switch it off for this script only.
+SET @old_safe_updates = @@SQL_SAFE_UPDATES;
+SET SQL_SAFE_UPDATES = 0;
+
 -- 1) The original seed inserted every top-level category twice (ids 11-20 copy
 --    ids 1-10). Point anything that uses a duplicate at the original, then
 --    remove the duplicates.
@@ -47,3 +52,5 @@ SET @sql = IF(@has_idx = 0,
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+SET SQL_SAFE_UPDATES = @old_safe_updates;

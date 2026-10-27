@@ -8,6 +8,11 @@
 -- Needs migration 001 (it does not touch existing rows) and category ids
 -- 1-10 and 21-24 (still present after migration 002).
 
+-- MySQL Workbench's "safe update mode" rejects UPDATE/DELETE statements that have no
+-- key in their WHERE clause (error 1175). Switch it off for this script only.
+SET @old_safe_updates = @@SQL_SAFE_UPDATES;
+SET SQL_SAFE_UPDATES = 0;
+
 SET NAMES utf8mb4;
 
 -- ------------------------------------------------------------------
@@ -425,3 +430,5 @@ INNER JOIN (
   GROUP BY shop_id
 ) f ON f.shop_id = s.shop_id
 SET s.rating = f.avg_rating, s.total_reviews = f.feedback_count;
+
+SET SQL_SAFE_UPDATES = @old_safe_updates;
