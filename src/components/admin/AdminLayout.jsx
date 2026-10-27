@@ -45,7 +45,7 @@ export default function AdminLayout() {
       <AdminSidebar />
 
       <div className="min-w-0 flex-1">
-        <header className="flex min-h-20 flex-wrap items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4 lg:px-8">
+        <header className="sticky top-0 z-20 flex min-h-20 flex-wrap items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4 lg:px-8">
           <div>
             <p className="text-sm text-gray-500">Shopee / Administration</p>
             <h2 className="mt-1 text-lg font-semibold text-gray-800">

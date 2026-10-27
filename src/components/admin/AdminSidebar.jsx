@@ -1,5 +1,6 @@
 
 import { NavLink, useNavigate } from "react-router-dom";
+import Logo from "../Logo";
 
 const menuGroups = [
   {
@@ -43,15 +44,9 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col bg-white text-gray-700 shadow-lg">
-      <div className="flex h-20 items-center gap-3 border-b border-gray-100 px-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EE4D2D] text-xl font-bold text-white">
-          S
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-[#EE4D2D]">Shopee</h1>
-          <p className="text-xs text-gray-500">ADMIN PANEL</p>
-        </div>
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col self-start bg-white text-gray-700 shadow-lg">
+      <div className="flex h-20 shrink-0 items-center border-b border-gray-100 px-6">
+        <Logo to="/admin/dashboard" className="w-28" label="ADMIN PANEL" />
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">

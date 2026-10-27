@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StoreHeader from "../../components/store/StoreHeader";
-import { useRequireCustomer } from "../../hooks/useCustomer";
-import { api, notifyCartChanged } from "../../services/api";
+import LoginPrompt from "../../components/LoginPrompt";
+import { api, getStoredUser, isCustomer, notifyCartChanged } from "../../services/api";
 import { formatCurrency } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
 
 export default function Cart() {
-    const user = useRequireCustomer();
+    const [user] = useState(() => getStoredUser());
+    const loggedIn = Boolean(user?.token);
+    const customer = loggedIn && isCustomer(user);
+    const [promptOpen, setPromptOpen] = useState(false);
     const navigate = useNavigate();
 
     const [items, setItems] = useState([]);
@@ -17,7 +20,10 @@ export default function Cart() {
     const [error, setError] = useState("");
 
     const load = useCallback(async () => {
-        if (!user) return;
+        if (!customer) {
+            setLoading(false);
+            return;
+        }
 
         try {
             const data = await api(`/api/customer/${user.user_id}/cart`);
@@ -38,7 +44,7 @@ export default function Cart() {
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, customer]);
 
     useEffect(() => {
         load();
@@ -86,12 +92,42 @@ export default function Cart() {
         return [...map.values()];
     }, [items]);
 
+    function checkout() {
+        if (!loggedIn) {
+            setPromptOpen(true);
+            return;
+        }
+
+        if (!customer) {
+            setError("Only customer accounts can check out.");
+            return;
+        }
+
+        if (chosen.length === 0) {
+            setError(
+                items.length === 0
+                    ? "Your cart is empty."
+                    : "Select at least one available item to check out."
+            );
+            return;
+        }
+
+        navigate("/customer/checkout", {
+            state: { selected: chosen.map((i) => i.cart_item_id) }
+        });
+    }
+
     const chosen = items.filter((i) => selected.has(i.cart_item_id));
     const subtotal = chosen.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
     return (
         <div className="min-h-screen bg-[#F5F5F5] text-gray-800">
             <StoreHeader />
+            <LoginPrompt
+                open={promptOpen}
+                onClose={() => setPromptOpen(false)}
+                message="Log in to check out your items."
+            />
 
             <main className="mx-auto max-w-300 px-4 py-6">
                 <h1 className="mb-4 text-xl font-medium">Shopping Cart</h1>
@@ -107,7 +143,9 @@ export default function Cart() {
                 ) : items.length === 0 ? (
                     <div className="rounded-sm bg-white py-20 text-center shadow-sm">
                         <p className="text-5xl">🛒</p>
-                        <p className="mt-4 text-sm text-gray-600">Your shopping cart is empty.</p>
+                        <p className="mt-4 text-sm text-gray-600">
+                            {loggedIn ? "Your shopping cart is empty." : "Log in to see the items in your cart."}
+                        </p>
                         <Link to="/search" className="mt-5 inline-block rounded bg-[#EE4D2D] px-6 py-2 text-sm text-white hover:bg-[#d73211]">
                             Go shopping now
                         </Link>
@@ -198,33 +236,29 @@ export default function Cart() {
                             ))}
                         </div>
 
-                        <div className="sticky bottom-0 mt-4 flex flex-wrap items-center justify-between gap-4 rounded-sm bg-white px-5 py-4 shadow-md">
-                            <p className="text-xs text-gray-500">
-                                Shipping is calculated per shop. Free shipping on shop totals of{" "}
-                                {formatCurrency(shipping?.free_shipping_minimum ?? 1000)}+.
-                            </p>
-
-                            <div className="flex items-center gap-5">
-                                <p className="text-sm">
-                                    Subtotal ({chosen.length} item{chosen.length === 1 ? "" : "s"}):{" "}
-                                    <span className="text-xl text-[#EE4D2D]">{formatCurrency(subtotal)}</span>
-                                </p>
-                                <button
-                                    type="button"
-                                    disabled={chosen.length === 0}
-                                    onClick={() =>
-                                        navigate("/customer/checkout", {
-                                            state: { selected: chosen.map((i) => i.cart_item_id) }
-                                        })
-                                    }
-                                    className="rounded bg-[#EE4D2D] px-10 py-3 text-sm text-white hover:bg-[#d73211] disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    Check out
-                                </button>
-                            </div>
-                        </div>
                     </>
                 )}
+
+                <div className="sticky bottom-0 mt-4 flex flex-wrap items-center justify-between gap-4 rounded-sm bg-white px-5 py-4 shadow-md">
+                    <p className="text-xs text-gray-500">
+                        Shipping is calculated per shop. Free shipping on shop totals of{" "}
+                        {formatCurrency(shipping?.free_shipping_minimum ?? 1000)}+.
+                    </p>
+
+                    <div className="flex items-center gap-5">
+                        <p className="text-sm">
+                            Subtotal ({chosen.length} item{chosen.length === 1 ? "" : "s"}):{" "}
+                            <span className="text-xl text-[#EE4D2D]">{formatCurrency(subtotal)}</span>
+                        </p>
+                        <button
+                            type="button"
+                            onClick={checkout}
+                            className="rounded bg-[#EE4D2D] px-10 py-3 text-sm text-white hover:bg-[#d73211]"
+                        >
+                            Check out
+                        </button>
+                    </div>
+                </div>
             </main>
         </div>
     );

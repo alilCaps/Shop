@@ -1,12 +1,13 @@
 import logo from "./assets/logo/orange_logo.png";
 import fb_icon from "./assets/icons/facebook_icon.png";
 import g_icon from "./assets/icons/google_icon.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { homeFor } from "./services/api";
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -65,7 +66,16 @@ function Login() {
                 return;
             }
 
-            navigate(destination, { replace: true });
+            // Customers go back to where they were (e.g. their cart).
+            const from = location.state?.from;
+            const backTo =
+                destination === "/customer/dashboard" &&
+                typeof from === "string" &&
+                from.startsWith("/")
+                    ? from
+                    : destination;
+
+            navigate(backTo, { replace: true });
 
         } catch (error) {
             console.error("LOGIN ERROR:", error);
