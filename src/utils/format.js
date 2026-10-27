@@ -46,3 +46,12 @@ export function shippingFor(subtotal, shipping) {
 
     return subtotal >= freeFrom ? 0 : fee;
 }
+
+// 12400 -> "12.4k"
+export function formatSold(count) {
+    const n = Number(count) || 0;
+
+    if (n < 1000) return String(n);
+
+    return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+}

@@ -1,11 +1,15 @@
-import logo from "./assets/logo/white_logo.png";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-
-import CategoryCard from "./assets/cards/CategoryCards.jsx";
-import FlashSaleCard from "./assets/cards/FlashSaleCards.jsx";
-import DiscoverCard from "./assets/cards/DiscoverCards.jsx";
+import StoreHeader from "./components/store/StoreHeader";
+import StoreFooter from "./components/store/StoreFooter";
+import FlashSaleCard from "./components/store/FlashSaleCard";
+import CategoryTile from "./components/store/CategoryTile";
+import ProductCard from "./components/store/ProductCard";
+import LoginPrompt from "./components/LoginPrompt";
+import { ArrowRight, BagIcon, HeadsetIcon, RefreshIcon, ShieldIcon, TruckIcon } from "./components/icons";
+import { api, getStoredUser, isCustomer } from "./services/api";
+import { getProductImage } from "./utils/productImages";
 
 import laptopComputers from "./assets/laptop-computers.jpg";
 import makeupFragrances from "./assets/makeup-fragrances.jpg";
@@ -18,403 +22,288 @@ import shoes from "./assets/shoes.jpg";
 import bags from "./assets/bags.jpg";
 import accessories from "./assets/accessories.jpg";
 
-import rackOrganizer from "./assets/rack-organizer.jpg";
-import tshirt from "./assets/t-shirt.jpg";
-import earphones from "./assets/earphones.jpg";
-import mattress from "./assets/mattress.jpg";
-import eyeglasses from "./assets/eyeglasses.jpg";
+const CATEGORY_IMAGES = {
+    "Laptops & Computers": laptopComputers,
+    Electronics: laptopComputers,
+    "Makeups & Fragrances": makeupFragrances,
+    "Home & Living": homeLiving,
+    "Health & Personal Care": healthPersonalCare,
+    "Health & Beauty": healthPersonalCare,
+    "Sports & Outdoors": sports,
+    "Toys & Games": toys,
+    Groceries: groceries,
+    Shoes: shoes,
+    Bags: bags,
+    Accessories: accessories
+};
 
-import miniFan from "./assets/mini-fan.jpg";
-import waterBottle from "./assets/water-bottle.jpg";
-import deskLamp from "./assets/desk-lamp.jpg";
-import backpack from "./assets/backpack.jpg";
-import mouse from "./assets/wireless-mouse.jpg";
-import mug from "./assets/ceramic-mug.jpg";
-import phoneStand from "./assets/phone-stand.jpg";
-import makeupOrganizer from "./assets/makeup-organizer.jpg";
-import stringLights from "./assets/led-string-lights.jpg";
-import storageBox from "./assets/foldable-storage-box.jpg";
+const FEATURED_COUNT = 5;
 
-
-function LandingPage() {
-    const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [categories, setCategories] = useState([]);
-    const [allProducts, setAllProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    const categoryImageMap = {
-        "Laptops & Computers": laptopComputers,
-        "Electronics": laptopComputers,
-        "Makeups & Fragrances": makeupFragrances,
-        "Home & Living": homeLiving,
-        "Health & Personal Care": healthPersonalCare,
-        "Health & Beauty": healthPersonalCare,
-        "Sports & Outdoors": sports,
-        "Toys & Games": toys,
-        "Groceries": groceries,
-        "Shoes": shoes,
-        "Bags": bags,
-        "Accessories": accessories
-    };
-
-    const productImageMap = {
-        "Moving Rack Organizer": rackOrganizer,
-        "Oversized Trend T-Shirt": tshirt,
-        "Wireless Bluetooth Earphones": earphones,
-        "Double Mattress Foam": mattress,
-        "Eyeglasses With Graded Lens": eyeglasses,
-        "Portable Mini Fan": miniFan,
-        "Stainless Steel Water Bottle": waterBottle,
-        "LED Desk Lamp": deskLamp,
-        "Laptop Backpack": backpack,
-        "Wireless Mouse": mouse,
-        "Cute Ceramic Mug": mug,
-        "Phone Stand": phoneStand,
-        "Makeup Organizer": makeupOrganizer,
-        "LED String Lights": stringLights,
-        "Foldable Storage Box": storageBox
-    };
-
-    const featuredNames = [
-        "Moving Rack Organizer",
-        "Oversized Trend T-Shirt",
-        "Wireless Bluetooth Earphones",
-        "Double Mattress Foam",
-        "Eyeglasses With Graded Lens"
-    ];
+// Hours:minutes:seconds left until midnight (the daily deals "reset").
+function useCountdown() {
+    const [now, setNow] = useState(() => new Date());
 
     useEffect(() => {
-        const loadLandingPageData = async () => {
-            try {
-                setLoading(true);
-                setError("");
-
-                const [categoryResponse, productResponse] =
-                    await Promise.all([
-                        fetch("http://localhost:5000/api/categories"),
-                        fetch("http://localhost:5000/api/products")
-                    ]);
-
-                if (!categoryResponse.ok || !productResponse.ok) {
-                    throw new Error("Unable to retrieve landing page data.");
-                }
-
-                const categoryData = await categoryResponse.json();
-                const productData = await productResponse.json();
-
-                setCategories(
-                    categoryData.map((category) => category.category_name)
-                );
-
-                setAllProducts(
-                    productData.map((product) => ({
-                        ...product,
-                        price: `₱${Number(product.price).toLocaleString("en-PH", {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 2
-                        })}`,
-                        sold: `${Number(product.sold).toLocaleString("en-PH")} sold`,
-                        rating: Number(product.rating || 0).toFixed(1),
-                        image: productImageMap[product.name] || accessories,
-                        stock: Number(product.stock || 0)
-                    }))
-                );
-            } catch (err) {
-                console.error("LANDING PAGE ERROR:", err);
-                setError(err.message || "Unable to load landing page data.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadLandingPageData();
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
     }, []);
 
-    const categoryImages = categories.map(
-        (category) => categoryImageMap[category] || accessories
+    const end = new Date(now);
+    end.setHours(24, 0, 0, 0);
+
+    const left = Math.max(0, Math.floor((end - now) / 1000));
+    const pad = (value) => String(value).padStart(2, "0");
+
+    return `${pad(Math.floor(left / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`;
+}
+
+const PERKS = [
+    { icon: TruckIcon, title: "Free shipping", text: "On selected orders" },
+    { icon: ShieldIcon, title: "Shopee Guarantee", text: "Safe & secure payment" },
+    { icon: RefreshIcon, title: "Easy returns", text: "Refund & return support" },
+    { icon: HeadsetIcon, title: "24/7 support", text: "We're here to help" }
+];
+
+export default function LandingPage() {
+    const location = useLocation();
+    const countdown = useCountdown();
+    const user = getStoredUser();
+    const customer = Boolean(user?.token) && isCustomer(user);
+
+    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [wished, setWished] = useState(() => new Set());
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [promptOpen, setPromptOpen] = useState(false);
+
+    useEffect(() => {
+        Promise.all([api("/api/categories"), api("/api/products")])
+            .then(([categoryData, productData]) => {
+                setCategories(categoryData);
+                setProducts(productData);
+            })
+            .catch((err) => setError(err.message || "Unable to load the store."))
+            .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        if (!customer) return;
+
+        api(`/api/customer/${user.user_id}/wishlist`)
+            .then((data) => setWished(new Set(data.items.map((i) => i.product_id))))
+            .catch(() => {});
+    }, [customer, user?.user_id]);
+
+    // Scroll to #flash-sale when arriving from the header link.
+    useEffect(() => {
+        if (!location.hash || loading) return;
+        document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+    }, [location.hash, loading]);
+
+    const toggleWishlist = useCallback(
+        async (product) => {
+            if (!customer) {
+                setPromptOpen(true);
+                return;
+            }
+
+            const id = product.product_id;
+            const has = wished.has(id);
+
+            try {
+                if (has) {
+                    await api(`/api/customer/${user.user_id}/wishlist/${id}`, { method: "DELETE" });
+                } else {
+                    await api(`/api/customer/${user.user_id}/wishlist`, {
+                        method: "POST",
+                        body: { product_id: id }
+                    });
+                }
+
+                setWished((previous) => {
+                    const next = new Set(previous);
+                    if (has) next.delete(id);
+                    else next.add(id);
+                    return next;
+                });
+            } catch {
+                // The heart simply stays as it was.
+            }
+        },
+        [customer, user?.user_id, wished]
     );
 
-    const products = featuredNames
-        .map((name) => allProducts.find((product) => product.name === name))
-        .filter(Boolean)
-        .map((product) => ({
-            ...product,
-            discount: "",
-            status: product.stock > 0 && product.stock <= 7
-                ? `ONLY ${product.stock} LEFT`
-                : "SELLING FAST"
-        }));
-
-    const discoverProducts = allProducts.filter(
-    (product) => !featuredNames.includes(product.name)
-);
+    const bestSellers = [...products]
+        .sort((a, b) => Number(b.sold) - Number(a.sold))
+        .slice(0, FEATURED_COUNT);
+    const flashIds = new Set(bestSellers.map((p) => p.product_id));
+    const discover = products.filter((p) => !flashIds.has(p.product_id));
+    const heroImages = bestSellers.slice(0, 3);
 
     return (
-        <div className="parentContainer bg-gray-100 min-w-300">
+        <div className="min-h-screen bg-[#f5f6f8] text-gray-800">
+            <StoreHeader />
 
-            <div className="bg-orange-600 text-white">
+            <main className="mx-auto max-w-300 space-y-12 px-4 py-6">
+                {error && (
+                    <p role="alert" className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {error}
+                    </p>
+                )}
 
-                <div className="max-w-300 mx-auto flex justify-between items-center py-2">
-
-                    {/* LEFT LINKS */}
-                    <div>
-                        <ol className="flex gap-5 list-none p-0 m-0 text-sm">
-                            <li><Link to="/seller/dashboard" className="hover:opacity-70">Seller Center</Link></li>
-                            <li><Link to="/signup" className="hover:opacity-70">Start Selling</Link></li>
-                            <li><a href="#" className="hover:opacity-70">Download</a></li>
-                            <li><a href="#" className="hover:opacity-70">Follow us on</a></li>
-                        </ol>
-                    </div>
-
-                    <div>
-                        <ol className="flex gap-5 list-none p-0 m-0 text-sm">
-                            <li><a href="#" className="hover:opacity-70">Notifications</a></li>
-                            <li><a href="#" className="hover:opacity-70">Help</a></li>
-                            <li><a href="#" className="hover:opacity-70">English</a></li>
-                            <li><Link to="/Signup" className="hover:opacity-70">Sign up</Link></li>
-                            <li>|</li>
-                            <li><Link to="/Login" className="hover:opacity-70">Login</Link></li>
-                        </ol>
-                    </div>
-
-                </div>
-
-                <div className="max-w-300 mx-auto grid grid-cols-[180px_1fr_100px] gap-6 items-center py-5">
-
-                    {/* Logo */}
-                    <div className="w-45 flex justify-center items-center">
-                        <img src={logo} alt="Shopee Logo" className="w-35 h-auto object-contain"/>
-                    </div>
-
-                    {/* Seach */}
-                    <div className="min-w-0">
-                        <form
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                const term = searchTerm.trim();
-                                navigate(term ? `/search?q=${encodeURIComponent(term)}` : "/search");
-                            }}
-                            className="h-12 rounded-sm bg-white flex items-center overflow-hidden"
-                        >
-                            <input type="text" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search" aria-label="Search products" className="flex-1 h-full px-4 text-gray-700 outline-none"/>
-                            <button type="submit" aria-label="Search" className="h-10 w-14 mr-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600">🔍</button>
-                        </form>
-
-
-                        {/* Seach suggestions */}
-                        <div className="overflow-hidden">
-                            <ol className="flex flex-nowrap gap-6 list-none p-0 mt-2 text-xs text-white whitespace-nowrap">
-                                <li><Link to="/search?q=Moving%20Rack%20Organizer" className="hover:underline">Moving Rack Organizer</Link></li>
-                                <li><Link to="/search?q=Pants%20Oversize" className="hover:underline">Pants Oversize</Link></li>
-                                <li><Link to="/search?q=Trend%20T-Shirt" className="hover:underline">Trend T-Shirt</Link></li>
-                                <li><Link to="/search?q=Eyeglasses" className="hover:underline">Eyeglasses</Link></li>
-                                <li><Link to="/search?q=Double%20Mattress%20Foam" className="hover:underline">Double Mattress Foam</Link></li>
-                            </ol>
-                        </div>
-                    </div>
-
-
-                    {/* Cart */}
-                    <div className="flex items-center justify-center">
-                        <Link to="/customer/cart" aria-label="Shopping cart" className="text-4xl hover:opacity-70">🛒</Link>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <main className="max-w-300 mx-auto py-6">
-
-                <section className="grid grid-cols-[220px_1fr] gap-4">
-
-                    {/* Category sidebar */}
-                    <div className="bg-white rounded-sm shadow-sm">
-                        
-                        <div className="bg-orange-500 text-white px-4 py-3 font-semibold">
-                            Categories
+                {/* Hero */}
+                <section className="grid gap-4 lg:grid-cols-[1fr_290px]">
+                    <div className="relative min-h-80 overflow-hidden rounded-2xl bg-linear-to-br from-[#c93a1e] via-[#EE4D2D] to-[#f58a63] p-8 text-white md:p-10">
+                        <div className="relative z-10 flex h-full max-w-md flex-col justify-center">
+                            <p className="text-xs font-semibold tracking-widest text-orange-100">SUPER SHOPPING DAY</p>
+                            <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">
+                                Big joy, bigger savings.
+                            </h1>
+                            <p className="mt-3 text-base text-orange-50">Up to 70% off + free shipping all day</p>
+                            <Link
+                                to="/search"
+                                className="mt-7 inline-flex w-fit items-center gap-2 rounded-lg bg-[#161a26] px-5 py-3 text-sm font-medium hover:bg-black"
+                            >
+                                <ArrowRight width={16} height={16} /> Shop the sale
+                            </Link>
                         </div>
 
-                        <ul className="list-none p-0 m-0">
-
-                            {categories.map((category, index) => (
-                                <li key={index}>
-                                    <Link to={`/search?category=${encodeURIComponent(category)}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500">{category}</Link>
-                                </li>
-                            ))}
-                        </ul>
-
-                    </div>
-
-
-                    {/* Banner */}
-                    <div className="grid grid-cols-[2fr_1fr] gap-3">
-
-                        <div className="h-82.5 bg-orange-500 rounded-sm flex flex-col justify-center px-10 text-white">
-
-                            <p className="text-lg">SHOPEE SUPER SALE</p>
-                            <h1 className="text-5xl font-bold mt-2">UP TO 70% OFF</h1>
-                            <p className="text-xl mt-4">Big discounts on your favorite products</p>
-                            <Link to="/search" className="mt-6 block bg-white text-orange-500 w-40 py-3 rounded-sm text-center font-semibold hover:bg-gray-100">SHOP NOW</Link>
-
-                        </div>
-
-
-                        {/* Mini banner */}
-                        <div className="grid grid-rows-2 gap-3">
-
-                            <div className="bg-orange-400 rounded-sm flex flex-col justify-center px-6 text-white">
-                                <p className="text-lg font-semibold">FREE SHIPPING</p>
-                                <p className="mt-2">On selected products</p>
-                            </div>
-
-
-                            <div className="bg-orange-300 rounded-sm flex flex-col justify-center px-6 text-white">
-                                <p className="text-lg font-semibold">DAILY DEALS</p>
-                                <p className="mt-2">Grab them before they're gone!</p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                <section className="bg-white mt-6 rounded-sm">
-
-                    <div className="px-6 py-4 border-b">
-                        <h2 className="text-lg text-gray-700">SHOP BY CATEGORY</h2>
-                    </div>
-
-
-                    <div className="grid grid-cols-10">
-
-                        {categories.map((category, index) => (
-                            <CategoryCard
-                                key={index}
-                                category={category}
-                                image={categoryImages[index]}
-                            />
-                        ))}
-
-                    </div>
-
-                </section>
-
-                {/* Flash sale */}
-                <section className="bg-white mt-6 rounded-sm">
-
-                    <div className="px-6 py-4 border-b flex justify-between items-center">
-                        <h2 className="text-xl text-orange-500 font-semibold">FLASH SALE</h2>
-                        <Link to="/search" className="text-sm text-orange-500 hover:underline">View All</Link>
-                    </div>
-
-
-                    <div className="grid grid-cols-5">
-                        {products.map((product, index) => (
-                            <FlashSaleCard
-                                key={index}
-                                product={product}
-                            />
-                        ))}
-                    </div>  
-
-                </section>
-
-
-                {/* Discover */}
-                <section className="mt-6">
-
-                        <div className="bg-white border-b-2 border-orange-500">
-                            <h2 className="text-xl text-orange-500 px-6 py-4">DAILY DISCOVER</h2>
-                        </div>
-
-                        <div className="grid grid-cols-5 gap-3 mt-3">
-                            {discoverProducts.map((product, index) => (
-                                <DiscoverCard
-                                    key={index}
-                                    product={product}
+                        <div className="pointer-events-none absolute -right-6 top-1/2 hidden -translate-y-1/2 gap-3 md:flex" aria-hidden="true">
+                            {heroImages.map((product, index) => (
+                                <img
+                                    key={product.product_id}
+                                    src={getProductImage(product.name, product.image_url)}
+                                    alt=""
+                                    className={`h-44 w-36 rounded-2xl border-4 border-white/80 object-cover shadow-xl ${
+                                        index === 1 ? "-translate-y-6 rotate-3" : index === 2 ? "translate-y-6 -rotate-3" : "-rotate-2"
+                                    }`}
                                 />
                             ))}
                         </div>
+                    </div>
 
+                    <div className="grid gap-4">
+                        <Link
+                            to="/search"
+                            className="flex flex-col justify-center rounded-2xl bg-[#161a26] p-6 text-white transition hover:bg-black"
+                        >
+                            <p className="text-[10px] font-semibold tracking-widest text-orange-300">SHOPEE MALL</p>
+                            <p className="mt-2 text-2xl font-bold leading-tight">100% authentic finds</p>
+                            <p className="mt-3 inline-flex items-center gap-1 text-xs">
+                                Explore brands <ArrowRight width={14} height={14} />
+                            </p>
+                        </Link>
+
+                        <Link
+                            to={user?.token ? "/search" : "/signup"}
+                            className="flex flex-col justify-center rounded-2xl bg-[#ffe9e2] p-6 transition hover:bg-[#ffddd2]"
+                        >
+                            <p className="text-[10px] font-semibold tracking-widest text-[#EE4D2D]">
+                                {user?.token ? "DAILY DEALS" : "NEW HERE?"}
+                            </p>
+                            <p className="mt-2 text-2xl font-bold text-[#EE4D2D]">
+                                {user?.token ? "Fresh picks" : "Join Shopee"}
+                            </p>
+                            <p className="mt-2 text-xs text-gray-600">
+                                {user?.token ? "Browse everything on sale today" : "Create a free account and start shopping"}
+                            </p>
+                            <p className="mt-3 text-xs font-semibold text-[#EE4D2D]">
+                                {user?.token ? "See all products" : "Sign up now"} →
+                            </p>
+                        </Link>
+                    </div>
                 </section>
 
+                {/* Categories */}
+                <section aria-labelledby="categories-title">
+                    <div className="mb-4 flex items-end justify-between">
+                        <h2 id="categories-title" className="text-2xl font-bold">Shop by category</h2>
+                        <Link to="/search" className="text-xs font-semibold text-[#EE4D2D] hover:underline">
+                            View all →
+                        </Link>
+                    </div>
 
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+                        {categories.slice(0, 8).map((category) => (
+                            <CategoryTile
+                                key={category.category_id}
+                                name={category.category_name}
+                                image={CATEGORY_IMAGES[category.category_name] || accessories}
+                            />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Flash sale */}
+                <section id="flash-sale" aria-labelledby="flash-title" className="scroll-mt-24">
+                    <div className="mb-4 flex items-end justify-between">
+                        <div className="flex items-baseline gap-4">
+                            <h2 id="flash-title" className="text-2xl font-bold text-[#EE4D2D]">FLASH SALE</h2>
+                            <span className="rounded bg-[#161a26] px-2 py-0.5 font-mono text-xs text-white" aria-label="Time left today">
+                                {countdown}
+                            </span>
+                        </div>
+                        <Link to="/search" className="text-xs font-semibold text-[#EE4D2D] hover:underline">
+                            See all deals →
+                        </Link>
+                    </div>
+
+                    {loading ? (
+                        <p className="py-16 text-center text-sm text-gray-500">Loading deals...</p>
+                    ) : bestSellers.length === 0 ? (
+                        <p className="rounded-xl bg-white py-16 text-center text-sm text-gray-500">
+                            No products yet. Check back soon!
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+                            {bestSellers.map((product) => (
+                                <FlashSaleCard
+                                    key={product.product_id}
+                                    product={product}
+                                    wished={wished.has(product.product_id)}
+                                    onWishlist={toggleWishlist}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* Perks */}
+                <section className="grid grid-cols-2 gap-6 rounded-xl bg-white px-6 py-5 shadow-sm lg:grid-cols-4">
+                    {PERKS.map(({ icon: Icon, title, text }) => (
+                        <div key={title} className="flex items-center gap-3">
+                            <span className="text-[#EE4D2D]"><Icon width={26} height={26} /></span>
+                            <div>
+                                <p className="text-xs font-semibold">{title}</p>
+                                <p className="text-[11px] text-gray-500">{text}</p>
+                            </div>
+                        </div>
+                    ))}
+                </section>
+
+                {/* Daily discover */}
+                {discover.length > 0 && (
+                    <section aria-labelledby="discover-title">
+                        <h2 id="discover-title" className="mb-4 flex items-center gap-2 text-2xl font-bold">
+                            <BagIcon className="text-[#EE4D2D]" /> Daily discover
+                        </h2>
+                        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
+                            {discover.map((product) => (
+                                <ProductCard key={product.product_id} product={product} />
+                            ))}
+                        </div>
+                    </section>
+                )}
             </main>
 
-            {/* Footer */}
-            <footer className="bg-white border-t mt-10">
+            <StoreFooter />
 
-                <div className="max-w-300 mx-auto grid grid-cols-4 gap-10 py-10">
-
-                    <div>
-
-                        <h3 className="font-semibold text-gray-700 mb-4">CUSTOMER SERVICE</h3>
-
-                        <ul className="list-none p-0 text-sm text-gray-500 space-y-2">
-                            <li><a href="#">Help Centre</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Shipping</a></li>
-                            <li><a href="#">Return & Refund</a></li>
-                        </ul>
-
-                    </div>
-
-                    <div>
-
-                        <h3 className="font-semibold text-gray-700 mb-4">ABOUT SHOPEE</h3>
-
-                        <ul className="list-none p-0 text-sm text-gray-500 space-y-2">
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Careers</a></li>
-                            <li><a href="#">Terms & Conditions</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                        </ul>
-
-                    </div>
-
-
-                    <div>
-
-                        <h3 className="font-semibold text-gray-700 mb-4">PAYMENT</h3>
-                        <p className="text-sm text-gray-500">Visa &nbsp; Mastercard &nbsp; GCash</p>
-                        <p className="text-sm text-gray-500 mt-3">Cash on Delivery</p>
-
-                    </div>
-
-
-                    <div>
-
-                        <h3 className="font-semibold text-gray-700 mb-4">FOLLOW US</h3>
-
-                        <div className="flex gap-4 text-2xl">
-
-                            <a href="#">📘</a>
-                            <a href="#">📷</a>
-                            <a href="#">🎵</a>
-                            <a href="#">▶️</a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div className="border-t py-6">
-                    <p className="text-center text-sm text-gray-500">© 2026 Shopee-Style Shopping Website. All Rights Reserved.</p>
-                </div>
-
-            </footer>
-
+            <LoginPrompt
+                open={promptOpen}
+                onClose={() => setPromptOpen(false)}
+                message="Log in to save items to your wishlist."
+            />
         </div>
     );
 }
-
-export default LandingPage;
-

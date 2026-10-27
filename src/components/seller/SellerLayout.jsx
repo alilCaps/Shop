@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import logo from "../../assets/logo/orange_logo.png";
+import Logo from "../Logo";
 import StatusBadge from "../StatusBadge";
 import {
     api,
@@ -67,12 +67,9 @@ export default function SellerLayout() {
 
     return (
         <div className="min-h-screen bg-[#F5F5F5] text-gray-800">
-            <header className="border-b border-gray-200 bg-white">
+            <header className="sticky top-0 z-30 border-b border-gray-200 bg-white">
                 <div className="mx-auto flex max-w-350 flex-wrap items-center justify-between gap-3 px-4 py-3">
-                    <Link to="/seller/dashboard" className="flex items-center gap-3">
-                        <img src={logo} alt="Shopee" className="w-28 object-contain" />
-                        <span className="text-lg text-[#EE4D2D]">Seller Centre</span>
-                    </Link>
+                    <Logo to="/seller/dashboard" className="w-28" label="SELLER CENTRE" />
 
                     <div className="flex items-center gap-3 text-sm">
                         {shop && (
@@ -87,7 +84,7 @@ export default function SellerLayout() {
             </header>
 
             <div className="mx-auto grid max-w-350 grid-cols-1 items-start gap-5 px-4 py-6 lg:grid-cols-[200px_minmax(0,1fr)]">
-                <aside className="rounded-lg bg-white p-2 shadow-sm">
+                <aside className="rounded-lg bg-white p-2 shadow-sm lg:sticky lg:top-20">
                     <nav>
                         {MENU.map((item) => (
                             <NavLink

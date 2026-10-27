@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import StoreHeader from "../../components/store/StoreHeader";
+import LoginPrompt from "../../components/LoginPrompt";
 import {
     api,
     getStoredUser,
@@ -34,6 +35,7 @@ export default function ProductDetail() {
     const [quantity, setQuantity] = useState(1);
     const [busy, setBusy] = useState(false);
     const [notice, setNotice] = useState(null);
+    const [promptOpen, setPromptOpen] = useState(false);
     const [wishlisted, setWishlisted] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
 
@@ -71,7 +73,7 @@ export default function ProductDetail() {
 
     function requireLogin() {
         if (!user?.token) {
-            navigate("/login");
+            setPromptOpen(true);
             return false;
         }
 
@@ -139,6 +141,11 @@ export default function ProductDetail() {
         return (
             <div className="min-h-screen bg-[#F5F5F5]">
                 <StoreHeader />
+            <LoginPrompt
+                open={promptOpen}
+                onClose={() => setPromptOpen(false)}
+                message="Log in to add items to your cart and check out."
+            />
                 <p className="py-32 text-center text-sm text-gray-500">Loading product...</p>
             </div>
         );
