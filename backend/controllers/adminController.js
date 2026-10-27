@@ -407,6 +407,18 @@ exports.createCategory = async (req, res) => {
       }
     }
 
+    const duplicate = await query(
+      `SELECT category_id FROM categories
+       WHERE category_name = ? AND parent_category_id <=> ?`,
+      [category_name.trim(), parent_category_id ? Number(parent_category_id) : null]
+    );
+
+    if (duplicate.length > 0) {
+      return res.status(409).json({
+        message: "A category with that name already exists.",
+      });
+    }
+
     const result = await query(
       `INSERT INTO categories
         (category_name, description, image_url, parent_category_id, status)
