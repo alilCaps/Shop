@@ -11,6 +11,7 @@ import {
     PAYMENT_METHOD_LABELS
 } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
+import { CheckIcon, StarIcon, StoreIcon } from "../../components/icons";
 
 const TABS = [
     { key: "ALL", label: "All", match: () => true },
@@ -42,9 +43,9 @@ function ReviewForm({ onSubmit, onCancel, busy }) {
                         aria-checked={rating === value}
                         aria-label={`${value} star${value > 1 ? "s" : ""}`}
                         onClick={() => setRating(value)}
-                        className={`text-2xl ${value <= rating ? "text-yellow-500" : "text-gray-300"}`}
+                        className={value <= rating ? "text-yellow-500" : "text-gray-300"}
                     >
-                        ★
+                        <StarIcon width={26} height={26} />
                     </button>
                 ))}
             </div>
@@ -100,7 +101,8 @@ function OrderCard({ order, userId, onChanged, setNotice }) {
         <article className="rounded-sm border border-gray-100 bg-white">
             <header className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 text-sm">
                 <p>
-                    🏬 <span className="font-medium">{order.shop_name || "Shop"}</span>
+                    <StoreIcon width={16} height={16} className="mr-1 inline-block align-text-bottom text-gray-500" />
+                    <span className="font-medium">{order.shop_name || "Shop"}</span>
                     <span className="ml-3 text-xs text-gray-400">
                         #{order.order_number} · {formatDate(order.placed_at)}
                     </span>
@@ -131,7 +133,7 @@ function OrderCard({ order, userId, onChanged, setNotice }) {
                                 {["DELIVERED", "COMPLETED"].includes(status) && (
                                     <div className="mt-1">
                                         {item.reviewed ? (
-                                            <span className="text-xs text-green-600">Reviewed ✓</span>
+                                            <span className="inline-flex items-center gap-1 text-xs text-green-600">Reviewed <CheckIcon width={12} height={12} /></span>
                                         ) : (
                                             <button
                                                 type="button"

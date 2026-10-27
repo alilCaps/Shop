@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import StoreHeader from "../../components/store/StoreHeader";
 import ProductCard from "../../components/store/ProductCard";
 import { api } from "../../services/api";
+import { SearchIcon } from "../../components/icons";
 
 const SORTS = [
     { value: "popular", label: "Best selling" },
@@ -135,7 +136,9 @@ export default function ProductSearch() {
                         <p className="py-20 text-center text-sm text-red-600">{error}</p>
                     ) : results.length === 0 ? (
                         <div className="rounded-sm bg-white py-20 text-center shadow-sm">
-                            <p className="text-4xl">🔎</p>
+                            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                                <SearchIcon width={30} height={30} />
+                            </span>
                             <p className="mt-3 text-sm text-gray-600">No products matched your search.</p>
                         </div>
                     ) : (

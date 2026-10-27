@@ -16,6 +16,13 @@ const getProducts = (req, res) => {
             p.total_reviews,
             p.total_sold AS sold,
             c.category_name AS category,
+            (
+                SELECT pi.image_url
+                FROM product_images pi
+                WHERE pi.product_id = p.product_id
+                ORDER BY pi.is_primary DESC, pi.display_order ASC
+                LIMIT 1
+            ) AS image_url,
             COALESCE(
                 SUM(
                     COALESCE(i.quantity, 0) -

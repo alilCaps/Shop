@@ -3,6 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import StatusBadge from "../../components/StatusBadge";
 import { api } from "../../services/api";
 import { formatCurrency, formatDate } from "../../utils/format";
+import { StoreIcon } from "../../components/icons";
 
 export default function SellerDashboard() {
     const { user, shop } = useOutletContext();
@@ -20,7 +21,9 @@ export default function SellerDashboard() {
     if (!shop) {
         return (
             <div className="rounded-lg bg-white p-10 text-center shadow-sm">
-                <p className="text-4xl">🏬</p>
+                <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                    <StoreIcon width={30} height={30} />
+                </span>
                 <h1 className="mt-3 text-lg font-medium">Open your shop</h1>
                 <p className="mt-1 text-sm text-gray-500">
                     Create your shop to start selling on the marketplace.

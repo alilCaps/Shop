@@ -1,4 +1,5 @@
 const {
+    cleanImagePath,
     pdb,
     ORDER_TRANSITIONS,
     validId,
@@ -75,7 +76,7 @@ function cleanShop(body) {
         contact_email: text(body.contact_email, 100),
         contact_phone: text(body.contact_phone, 30),
         shop_address: text(body.shop_address, 255),
-        shop_logo: text(body.shop_logo, 500)
+        shop_logo: cleanImagePath(body.shop_logo)
     };
 }
 
@@ -192,8 +193,40 @@ exports.listProducts = handler(async function listProducts(req, res) {
         [req.shop.shop_id]
     );
 
-    res.json({ products: rows });
+    const ids = rows.map((row) => row.product_id);
+    const [images] = ids.length
+        ? await pdb.query(
+              `SELECT product_id, image_url
+               FROM product_images
+               WHERE product_id IN (?)
+               ORDER BY is_primary DESC, display_order ASC, image_id ASC`,
+              [ids]
+          )
+        : [[]];
+
+    res.json({
+        products: rows.map((row) => {
+            const own = images
+                .filter((image) => image.product_id === row.product_id)
+                .map((image) => image.image_url);
+
+            return { ...row, images: own, image_url: own[0] || null };
+        })
+    });
 });
+
+// Replaces a product's pictures; the first one is the primary picture.
+async function saveImages(conn, productId, images) {
+    await conn.query("DELETE FROM product_images WHERE product_id = ?", [productId]);
+
+    for (let index = 0; index < images.length; index += 1) {
+        await conn.query(
+            `INSERT INTO product_images (product_id, image_url, is_primary, display_order)
+             VALUES (?, ?, ?, ?)`,
+            [productId, images[index], index === 0 ? 1 : 0, index]
+        );
+    }
+}
 
 function parseProduct(body, { partial }) {
     const errors = [];
@@ -253,6 +286,17 @@ function parseProduct(body, { partial }) {
             typeof body.description === "string"
                 ? body.description.trim().slice(0, 5000) || null
                 : null;
+    }
+
+    if (body.images !== undefined) {
+        const list = Array.isArray(body.images) ? body.images : null;
+        const cleaned = list ? list.map(cleanImagePath) : [];
+
+        if (!list || list.length > 5 || cleaned.some((image) => image === null)) {
+            errors.push("Product pictures must be uploaded images (5 at most).");
+        }
+
+        out.images = cleaned;
     }
 
     if (body.brand !== undefined) {
@@ -316,6 +360,10 @@ exports.createProduct = handler(async function createProduct(req, res) {
             [variant.insertId, data.stock]
         );
 
+        if (data.images?.length) {
+            await saveImages(conn, product.insertId, data.images);
+        }
+
         await conn.commit();
 
         res.status(201).json({
@@ -371,7 +419,7 @@ exports.updateProduct = handler(async function updateProduct(req, res) {
         }
     }
 
-    const { stock, ...productFields } = data;
+    const { stock, images, ...productFields } = data;
     const entries = Object.entries(productFields);
 
     const conn = await pdb.getConnection();
@@ -423,6 +471,10 @@ exports.updateProduct = handler(async function updateProduct(req, res) {
                  ON DUPLICATE KEY UPDATE quantity = VALUES(quantity)`,
                 [variantId, stock]
             );
+        }
+
+        if (images !== undefined) {
+            await saveImages(conn, Number(productId), images);
         }
 
         await conn.commit();

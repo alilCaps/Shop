@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { LockIcon } from "./icons";
 
 // Modal shown when a guest tries to do something that needs an account.
 export default function LoginPrompt({ open, onClose, message = "Please log in to continue." }) {
@@ -30,7 +31,9 @@ export default function LoginPrompt({ open, onClose, message = "Please log in to
                 onClick={(event) => event.stopPropagation()}
                 className="w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-xl"
             >
-                <p className="text-4xl">🔒</p>
+                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                    <LockIcon width={26} height={26} />
+                </span>
                 <h2 id="login-prompt-title" className="mt-3 text-lg font-semibold">
                     Log in to continue
                 </h2>

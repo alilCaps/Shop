@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminService } from "../../services/adminService.js";
 import { formatCurrency } from "../../utils/format.js";
+import { ArrowRight, ClipboardIcon, PackageIcon, PesoIcon, StoreIcon, TagIcon, UserIcon, UsersIcon } from "../../components/icons.jsx";
 
 function StatCard({ title, value, icon, description, loading }) {
   return (
@@ -55,25 +56,25 @@ export default function AdminDashboard() {
       title: "Manage Users",
       description: "View customer and seller accounts.",
       path: "/admin/users",
-      icon: "♙",
+      icon: <UsersIcon width={24} height={24} />,
     },
     {
       title: "Manage Products",
       description: "Review products listed on the platform.",
       path: "/admin/products",
-      icon: "□",
+      icon: <PackageIcon width={24} height={24} />,
     },
     {
       title: "Manage Categories",
       description: "Organize the store's product categories.",
       path: "/admin/categories",
-      icon: "▤",
+      icon: <TagIcon width={24} height={24} />,
     },
     {
       title: "Manage Orders",
       description: "Review customer orders.",
       path: "/admin/orders",
-      icon: "▣",
+      icon: <ClipboardIcon width={24} height={24} />,
     },
   ];
 
@@ -117,42 +118,42 @@ export default function AdminDashboard() {
         <StatCard
           title="Total Users"
           value={Number(stats.users || 0).toLocaleString()}
-          icon="♙"
+          icon={<UsersIcon width={24} height={24} />}
           description="All registered accounts"
           loading={loading}
         />
         <StatCard
           title="Customers"
           value={Number(stats.customers || 0).toLocaleString()}
-          icon="♧"
+          icon={<UserIcon width={24} height={24} />}
           description="Accounts with the Customer role"
           loading={loading}
         />
         <StatCard
           title="Sellers"
           value={Number(stats.sellers || 0).toLocaleString()}
-          icon="⌂"
+          icon={<StoreIcon width={24} height={24} />}
           description={`${Number(stats.pending_shops || 0)} shop(s) waiting for approval`}
           loading={loading}
         />
         <StatCard
           title="Products"
           value={Number(stats.products || 0).toLocaleString()}
-          icon="□"
+          icon={<PackageIcon width={24} height={24} />}
           description={`${Number(stats.categories || 0)} categories`}
           loading={loading}
         />
         <StatCard
           title="Orders"
           value={Number(stats.orders || 0).toLocaleString()}
-          icon="▣"
+          icon={<ClipboardIcon width={24} height={24} />}
           description={`${Number(stats.to_ship || 0)} waiting to be shipped`}
           loading={loading}
         />
         <StatCard
           title="Revenue"
           value={formatCurrency(stats.revenue)}
-          icon="₱"
+          icon={<PesoIcon width={24} height={24} />}
           description="Paid, shipped and completed orders"
           loading={loading}
         />
@@ -186,9 +187,7 @@ export default function AdminDashboard() {
                   {item.description}
                 </p>
               </div>
-              <span className="text-gray-400 group-hover:text-[#EE4D2D]">
-                →
-              </span>
+              <ArrowRight width={18} height={18} className="text-gray-400 group-hover:text-[#EE4D2D]" />
             </Link>
           ))}
         </div>

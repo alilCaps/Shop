@@ -1,3 +1,4 @@
+import { assetUrl } from "../services/api";
 import accessories from "../assets/accessories.jpg";
 import rackOrganizer from "../assets/rack-organizer.jpg";
 import tshirt from "../assets/t-shirt.jpg";
@@ -35,5 +36,5 @@ const BY_NAME = {
 
 // Uses the uploaded image when there is one, otherwise a bundled picture.
 export function getProductImage(name, imageUrl) {
-    return imageUrl || BY_NAME[name] || accessories;
+    return assetUrl(imageUrl) || BY_NAME[name] || accessories;
 }

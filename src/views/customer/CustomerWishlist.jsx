@@ -5,6 +5,7 @@ import { EmptyState, ErrorNote, Notice, Spinner } from "../../components/Feedbac
 import { Link } from "react-router-dom";
 import { useApi } from "../../hooks/useApi";
 import { api, notifyCartChanged } from "../../services/api";
+import { HeartIcon } from "../../components/icons";
 
 function Wishlist({ user }) {
     const base = `/api/customer/${user.user_id}`;
@@ -42,7 +43,7 @@ function Wishlist({ user }) {
             {loading ? (
                 <Spinner />
             ) : items.length === 0 ? (
-                <EmptyState icon="♡" title="Your wishlist is empty." hint="Tap the heart on a product to save it for later.">
+                <EmptyState icon={<HeartIcon width={30} height={30} />} title="Your wishlist is empty." hint="Tap the heart on a product to save it for later.">
                     <Link to="/search" className="rounded bg-[#EE4D2D] px-5 py-2 text-sm text-white hover:bg-[#d73211]">
                         Discover products
                     </Link>

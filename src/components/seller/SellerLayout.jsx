@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import Logo from "../Logo";
+import { assetUrl } from "../../services/api";
 import StatusBadge from "../StatusBadge";
 import {
     api,
@@ -9,13 +10,22 @@ import {
     homeFor,
     roleOf
 } from "../../services/api";
+import {
+    BellIcon,
+    ClipboardIcon,
+    GridIcon,
+    HomeIcon,
+    LogoutIcon,
+    PackageIcon,
+    StoreIcon
+} from "../icons";
 
 const MENU = [
-    { to: "/seller/dashboard", label: "Dashboard", icon: "▦" },
-    { to: "/seller/shop", label: "My Shop", icon: "🏬" },
-    { to: "/seller/products", label: "Products", icon: "□" },
-    { to: "/seller/orders", label: "Orders", icon: "▤" },
-    { to: "/seller/notifications", label: "Notifications", icon: "🔔" }
+    { to: "/seller/dashboard", label: "Dashboard", icon: GridIcon },
+    { to: "/seller/shop", label: "My Shop", icon: StoreIcon },
+    { to: "/seller/products", label: "Products", icon: PackageIcon },
+    { to: "/seller/orders", label: "Orders", icon: ClipboardIcon },
+    { to: "/seller/notifications", label: "Notifications", icon: BellIcon }
 ];
 
 // Auth guard + sidebar for every Seller Centre page (nested layout route).
@@ -74,6 +84,13 @@ export default function SellerLayout() {
                     <div className="flex items-center gap-3 text-sm">
                         {shop && (
                             <>
+                                {shop.shop_logo && (
+                                    <img
+                                        src={assetUrl(shop.shop_logo)}
+                                        alt=""
+                                        className="h-8 w-8 rounded-full border border-gray-200 object-cover"
+                                    />
+                                )}
                                 <span className="font-medium">{shop.shop_name}</span>
                                 <StatusBadge status={shop.status} />
                             </>
@@ -98,7 +115,7 @@ export default function SellerLayout() {
                                     }`
                                 }
                             >
-                                <span className="w-5 text-center">{item.icon}</span>
+                                <item.icon width={18} height={18} className="shrink-0" />
                                 {item.label}
                             </NavLink>
                         ))}
@@ -107,7 +124,7 @@ export default function SellerLayout() {
                             to="/"
                             className="flex items-center gap-3 rounded-md px-3 py-3 text-sm text-gray-700 hover:bg-gray-50"
                         >
-                            <span className="w-5 text-center">⌂</span>
+                            <HomeIcon width={18} height={18} className="shrink-0" />
                             Back to store
                         </Link>
 
@@ -116,7 +133,7 @@ export default function SellerLayout() {
                             onClick={logout}
                             className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
                         >
-                            <span className="w-5 text-center">↪</span>
+                            <LogoutIcon width={18} height={18} className="shrink-0" />
                             Logout
                         </button>
                     </nav>

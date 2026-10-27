@@ -5,6 +5,7 @@ import LoginPrompt from "../../components/LoginPrompt";
 import { api, getStoredUser, isCustomer, notifyCartChanged } from "../../services/api";
 import { formatCurrency } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
+import { CartIcon, StoreIcon } from "../../components/icons";
 
 export default function Cart() {
     const [user] = useState(() => getStoredUser());
@@ -142,7 +143,9 @@ export default function Cart() {
                     <p className="py-20 text-center text-sm text-gray-500">Loading your cart...</p>
                 ) : items.length === 0 ? (
                     <div className="rounded-sm bg-white py-20 text-center shadow-sm">
-                        <p className="text-5xl">🛒</p>
+                        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                            <CartIcon width={30} height={30} />
+                        </span>
                         <p className="mt-4 text-sm text-gray-600">
                             {loggedIn ? "Your shopping cart is empty." : "Log in to see the items in your cart."}
                         </p>
@@ -155,8 +158,8 @@ export default function Cart() {
                         <div className="space-y-4">
                             {groups.map((group) => (
                                 <section key={group.shop_name} className="rounded-sm bg-white shadow-sm">
-                                    <h2 className="border-b border-gray-100 px-4 py-3 text-sm font-medium">
-                                        🏬 {group.shop_name}
+                                    <h2 className="flex items-center gap-2 border-b border-gray-100 px-4 py-3 text-sm font-medium">
+                                        <StoreIcon width={16} height={16} className="text-gray-500" /> {group.shop_name}
                                     </h2>
 
                                     <ul className="divide-y divide-gray-100">

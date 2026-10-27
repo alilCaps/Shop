@@ -1,4 +1,15 @@
 import { Link } from "react-router-dom";
+import { assetUrl } from "../../../services/api";
+import {
+    BellIcon,
+    CreditCardIcon,
+    GridIcon,
+    HeartIcon,
+    LogoutIcon,
+    MapPinIcon,
+    PackageIcon,
+    UserIcon
+} from "../../../components/icons";
 
 function CustomerSidebar({
     user,
@@ -8,13 +19,13 @@ function CustomerSidebar({
     onLogout
 }) {
     const menuItems = [
-        { name: "Account overview", icon: "▦", path: "/customer/dashboard" },
-        { name: "My profile", icon: "♙", path: "/customer/profile" },
-        { name: "My orders", icon: "□", path: "/customer/orders" },
-        { name: "Notifications", icon: "🔔", path: "/customer/notifications" },
-        { name: "Wishlist", icon: "♡", path: "/customer/wishlist" },
-        { name: "Addresses", icon: "⌖", path: "/customer/addresses" },
-        { name: "Payments", icon: "▤", path: "/customer/payments" }
+        { name: "Account overview", icon: GridIcon, path: "/customer/dashboard" },
+        { name: "My profile", icon: UserIcon, path: "/customer/profile" },
+        { name: "My orders", icon: PackageIcon, path: "/customer/orders" },
+        { name: "Notifications", icon: BellIcon, path: "/customer/notifications" },
+        { name: "Wishlist", icon: HeartIcon, path: "/customer/wishlist" },
+        { name: "Addresses", icon: MapPinIcon, path: "/customer/addresses" },
+        { name: "Payments", icon: CreditCardIcon, path: "/customer/payments" }
     ];
 
     return (
@@ -25,12 +36,12 @@ function CustomerSidebar({
                     <div className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center text-xl overflow-hidden shrink-0">
                         {user?.profile_image ? (
                             <img
-                                src={user.profile_image}
+                                src={assetUrl(user.profile_image)}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            "👤"
+                            <UserIcon width={22} height={22} className="text-gray-500" />
                         )}
                     </div>
 
@@ -59,9 +70,7 @@ function CustomerSidebar({
                                 : "text-gray-700 hover:bg-gray-50"
                         }`}
                     >
-                        <span className="w-5 text-center text-base">
-                            {item.icon}
-                        </span>
+                        <item.icon width={18} height={18} className="shrink-0" />
 
                         <span>{item.name}</span>
                     </Link>
@@ -73,7 +82,7 @@ function CustomerSidebar({
                     onClick={onLogout}
                     className="w-full flex items-center gap-3 px-3 py-3 rounded-md text-sm text-left text-gray-700 hover:bg-gray-50"
                 >
-                    <span className="w-5 text-center">↪</span>
+                    <LogoutIcon width={18} height={18} className="shrink-0" />
                     <span>Logout</span>
                 </button>
             </nav>

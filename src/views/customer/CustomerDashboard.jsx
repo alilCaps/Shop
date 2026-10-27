@@ -4,6 +4,7 @@ import StatusBadge from "../../components/StatusBadge";
 import { ErrorNote, EmptyState, Spinner } from "../../components/Feedback";
 import { useApi } from "../../hooks/useApi";
 import { formatCurrency, formatDate } from "../../utils/format";
+import { BagIcon, ClipboardIcon, StarIcon, TruckIcon } from "../../components/icons";
 
 function Overview({ user }) {
     const base = `/api/customer/${user.user_id}`;
@@ -17,21 +18,19 @@ function Overview({ user }) {
     const shipped = onTheWay.data?.order || null;
 
     const cards = [
-        { label: "To Receive", value: values.to_receive, to: "/customer/orders?tab=SHIPPED", icon: "🚚" },
-        { label: "To Review", value: values.to_review, to: "/customer/orders?tab=DELIVERED", icon: "☆" },
-        { label: "Total Orders", value: values.total_orders, to: "/customer/orders", icon: "▤" }
+        { label: "To Receive", value: values.to_receive, to: "/customer/orders?tab=SHIPPED", icon: TruckIcon },
+        { label: "To Review", value: values.to_review, to: "/customer/orders?tab=DELIVERED", icon: StarIcon },
+        { label: "Total Orders", value: values.total_orders, to: "/customer/orders", icon: ClipboardIcon }
     ];
 
     return (
         <div className="space-y-5 p-5">
             <div className="relative overflow-hidden rounded-lg bg-[#F4512B] px-6 py-5 text-white">
-                <h2 className="text-2xl font-semibold">Welcome, {firstName} 👋</h2>
+                <h2 className="text-2xl font-semibold">Welcome, {firstName}</h2>
                 <p className="mt-2 text-sm text-orange-50">
                     Here's an overview of your account and orders.
                 </p>
-                <span className="absolute right-8 top-1/2 -translate-y-1/2 text-6xl opacity-80">
-                    🛍️
-                </span>
+                <BagIcon width={64} height={64} className="absolute right-8 top-1/2 -translate-y-1/2 opacity-80" />
             </div>
 
             <ErrorNote message={stats.error || orders.error} />
@@ -44,7 +43,7 @@ function Overview({ user }) {
                         className="flex items-center gap-3 rounded-lg border border-gray-100 p-4 transition hover:border-orange-200 hover:shadow-sm"
                     >
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff1ed] text-lg text-[#EE4D2D]">
-                            {card.icon}
+                            <card.icon width={20} height={20} />
                         </span>
                         <span>
                             <span className="block text-xl font-semibold">

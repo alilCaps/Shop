@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import StatusBadge from "../../components/StatusBadge";
+import { ImageUpload } from "../../components/ImageUpload";
 import { api } from "../../services/api";
 
 const FIELDS = [
     ["shop_name", "Shop name", "text", true],
     ["contact_email", "Contact email", "email"],
     ["contact_phone", "Contact phone", "text"],
-    ["shop_address", "Shop address", "text"],
-    ["shop_logo", "Logo image URL", "url"]
+    ["shop_address", "Shop address", "text"]
 ];
 
 export default function SellerShop() {
@@ -68,6 +68,19 @@ export default function SellerShop() {
                         {notice.text}
                     </p>
                 )}
+
+                <div className="flex items-center gap-5">
+                    <ImageUpload
+                        label="Upload logo"
+                        size="h-24 w-24"
+                        value={form.shop_logo}
+                        onChange={(url) => {
+                            setForm((prev) => ({ ...prev, shop_logo: url }));
+                            setNotice(null);
+                        }}
+                    />
+                    <p className="text-sm text-gray-500">Your shop logo appears in the Seller Centre.</p>
+                </div>
 
                 {FIELDS.map(([name, label, type, required]) => (
                     <label key={name} className="block text-sm">

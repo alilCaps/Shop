@@ -208,8 +208,8 @@ export default function LandingPage() {
                             <p className="mt-2 text-xs text-gray-600">
                                 {user?.token ? "Browse everything on sale today" : "Create a free account and start shopping"}
                             </p>
-                            <p className="mt-3 text-xs font-semibold text-[#EE4D2D]">
-                                {user?.token ? "See all products" : "Sign up now"} →
+                            <p className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#EE4D2D]">
+                                {user?.token ? "See all products" : "Sign up now"} <ArrowRight width={14} height={14} />
                             </p>
                         </Link>
                     </div>
@@ -219,8 +219,8 @@ export default function LandingPage() {
                 <section aria-labelledby="categories-title">
                     <div className="mb-4 flex items-end justify-between">
                         <h2 id="categories-title" className="text-2xl font-bold">Shop by category</h2>
-                        <Link to="/search" className="text-xs font-semibold text-[#EE4D2D] hover:underline">
-                            View all →
+                        <Link to="/search" className="inline-flex items-center gap-1 text-xs font-semibold text-[#EE4D2D] hover:underline">
+                            View all <ArrowRight width={14} height={14} />
                         </Link>
                     </div>
 
@@ -244,8 +244,8 @@ export default function LandingPage() {
                                 {countdown}
                             </span>
                         </div>
-                        <Link to="/search" className="text-xs font-semibold text-[#EE4D2D] hover:underline">
-                            See all deals →
+                        <Link to="/search" className="inline-flex items-center gap-1 text-xs font-semibold text-[#EE4D2D] hover:underline">
+                            See all deals <ArrowRight width={14} height={14} />
                         </Link>
                     </div>
 

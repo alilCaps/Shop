@@ -111,6 +111,15 @@ const updateUser = (req, res) => {
     }
 
     if (
+        profile_image !== "" &&
+        !/^(\/uploads\/[A-Za-z0-9_\-.]{1,200}|https?:\/\/\S{1,480})$/i.test(profile_image)
+    ) {
+        return res.status(400).json({
+            message: "Invalid profile image."
+        });
+    }
+
+    if (
         first_name.length > 100 ||
         last_name.length > 100 ||
         phone.length > 30 ||
