@@ -3,14 +3,15 @@ import { Link } from "react-router-dom";
 import { EmptyState, ErrorNote, Spinner } from "./Feedback";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
+import { BellIcon, CreditCardIcon, MessageIcon, PackageIcon, SettingsIcon, TagIcon, TruckIcon } from "./icons";
 
 const ICONS = {
-    ORDER: "📦",
-    PAYMENT: "💳",
-    SHIPPING: "🚚",
-    PROMOTION: "🏷️",
-    SYSTEM: "⚙️",
-    MESSAGE: "💬"
+    ORDER: PackageIcon,
+    PAYMENT: CreditCardIcon,
+    SHIPPING: TruckIcon,
+    PROMOTION: TagIcon,
+    SYSTEM: SettingsIcon,
+    MESSAGE: MessageIcon
 };
 
 function timeLabel(value) {
@@ -61,7 +62,7 @@ export default function NotificationList({ ordersPath }) {
             {loading ? (
                 <Spinner />
             ) : items.length === 0 ? (
-                <EmptyState icon="🔔" title="You're all caught up." hint="Order and shipping updates will show up here." />
+                <EmptyState icon={<BellIcon width={30} height={30} />} title="You're all caught up." hint="Order and shipping updates will show up here." />
             ) : (
                 <ul className="divide-y divide-gray-100 rounded border border-gray-100">
                     {items.map((item) => (
@@ -69,8 +70,11 @@ export default function NotificationList({ ordersPath }) {
                             key={item.notification_id}
                             className={`flex gap-3 px-4 py-3 ${item.is_read ? "" : "bg-[#fff8f6]"}`}
                         >
-                            <span className="text-2xl" aria-hidden="true">
-                                {ICONS[item.notification_type] || "🔔"}
+                            <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                                {(() => {
+                                    const Icon = ICONS[item.notification_type] || BellIcon;
+                                    return <Icon width={18} height={18} />;
+                                })()}
                             </span>
                             <div className="min-w-0 flex-1 text-sm">
                                 <p className={item.is_read ? "text-gray-700" : "font-medium"}>{item.title}</p>

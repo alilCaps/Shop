@@ -25,3 +25,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Images uploaded by users (the bundled demo pictures are kept)
+backend/uploads/*
+!backend/uploads/demo/

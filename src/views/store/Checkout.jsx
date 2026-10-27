@@ -7,6 +7,7 @@ import { useRequireCustomer } from "../../hooks/useCustomer";
 import { api, notifyCartChanged } from "../../services/api";
 import { formatCurrency, shippingFor, PAYMENT_METHOD_LABELS } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
+import { ArrowLeft, CheckIcon, MapPinIcon, StoreIcon } from "../../components/icons";
 
 const METHODS = [
     "CASH_ON_DELIVERY",
@@ -135,7 +136,9 @@ export default function Checkout() {
                 <StoreHeader />
                 <main className="mx-auto max-w-150 px-4 py-12">
                     <div className="rounded-sm bg-white p-8 text-center shadow-sm">
-                        <p className="text-5xl">🎉</p>
+                        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600">
+                            <CheckIcon width={32} height={32} />
+                        </span>
                         <h1 className="mt-4 text-xl font-medium">Order placed successfully!</h1>
                         <ul className="mt-4 space-y-1 text-sm text-gray-600">
                             {placed.map((order) => (
@@ -180,7 +183,7 @@ export default function Checkout() {
                     <>
                         <section className="rounded-sm bg-white p-5 shadow-sm">
                             <h2 className="mb-3 flex items-center gap-2 font-medium text-[#EE4D2D]">
-                                📍 Delivery address
+                                <MapPinIcon width={18} height={18} /> Delivery address
                             </h2>
 
                             {addresses.length > 0 && !addingAddress && (
@@ -233,8 +236,8 @@ export default function Checkout() {
 
                         {shops.map((shop) => (
                             <section key={shop.shop_name} className="rounded-sm bg-white shadow-sm">
-                                <h2 className="border-b border-gray-100 px-5 py-3 text-sm font-medium">
-                                    🏬 {shop.shop_name}
+                                <h2 className="flex items-center gap-2 border-b border-gray-100 px-5 py-3 text-sm font-medium">
+                                    <StoreIcon width={16} height={16} className="text-gray-500" /> {shop.shop_name}
                                 </h2>
                                 <ul className="divide-y divide-gray-50">
                                     {shop.items.map((item) => (
@@ -300,8 +303,8 @@ export default function Checkout() {
                         </section>
 
                         <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-4 rounded-sm bg-white px-5 py-4 shadow-md">
-                            <Link to="/customer/cart" className="text-sm text-gray-500 hover:text-[#EE4D2D]">
-                                ← Back to cart
+                            <Link to="/customer/cart" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#EE4D2D]">
+                                <ArrowLeft width={16} height={16} /> Back to cart
                             </Link>
                             <div className="flex items-center gap-5">
                                 <p className="text-sm">

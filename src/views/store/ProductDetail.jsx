@@ -10,14 +10,21 @@ import {
 } from "../../services/api";
 import { formatCurrency, formatDate } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
+import { CartIcon, HeartIcon, StarIcon } from "../../components/icons";
 
 function Stars({ value }) {
     const rounded = Math.round(Number(value) || 0);
 
     return (
-        <span className="text-yellow-500" aria-label={`${rounded} out of 5 stars`}>
-            {"★".repeat(rounded)}
-            <span className="text-gray-300">{"★".repeat(5 - rounded)}</span>
+        <span className="inline-flex gap-0.5" role="img" aria-label={`${rounded} out of 5 stars`}>
+            {[1, 2, 3, 4, 5].map((n) => (
+                <StarIcon
+                    key={n}
+                    width={16}
+                    height={16}
+                    className={n <= rounded ? "text-yellow-500" : "text-gray-300"}
+                />
+            ))}
         </span>
     );
 }
@@ -310,9 +317,9 @@ export default function ProductDetail() {
                                 type="button"
                                 disabled={busy || stock === 0}
                                 onClick={addToCart}
-                                className="rounded border border-[#EE4D2D] bg-orange-50 px-6 py-3 text-sm text-[#EE4D2D] hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex items-center gap-2 rounded border border-[#EE4D2D] bg-orange-50 px-6 py-3 text-sm text-[#EE4D2D] hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                🛒 Add to cart
+                                <CartIcon width={18} height={18} /> Add to cart
                             </button>
                             <button
                                 type="button"
@@ -325,9 +332,10 @@ export default function ProductDetail() {
                             <button
                                 type="button"
                                 onClick={toggleWishlist}
-                                className="rounded border border-gray-300 px-4 py-3 text-sm hover:bg-gray-50"
+                                className="inline-flex items-center gap-2 rounded border border-gray-300 px-4 py-3 text-sm hover:bg-gray-50"
                             >
-                                {wishlisted ? "♥ In wishlist" : "♡ Add to wishlist"}
+                                <HeartIcon width={18} height={18} filled={wishlisted} className={wishlisted ? "text-[#EE4D2D]" : ""} />
+                                {wishlisted ? "In wishlist" : "Add to wishlist"}
                             </button>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ import StatusBadge from "../../components/StatusBadge";
 import { EmptyState, ErrorNote, Spinner } from "../../components/Feedback";
 import { useApi } from "../../hooks/useApi";
 import { formatCurrency, formatDate, PAYMENT_METHOD_LABELS } from "../../utils/format";
+import { CreditCardIcon } from "../../components/icons";
 
 function Payments({ user }) {
     const { data, loading, error, reload } = useApi(`/api/customer/${user.user_id}/payments`);
@@ -20,7 +21,7 @@ function Payments({ user }) {
             {loading ? (
                 <Spinner />
             ) : payments.length === 0 ? (
-                <EmptyState icon="💳" title="No payments yet." hint="Payments for your orders will be listed here." />
+                <EmptyState icon={<CreditCardIcon width={30} height={30} />} title="No payments yet." hint="Payments for your orders will be listed here." />
             ) : (
                 <>
                     <p className="text-sm text-gray-600">

@@ -1,35 +1,51 @@
 
 import { NavLink, useNavigate } from "react-router-dom";
 import Logo from "../Logo";
+import {
+  BellIcon,
+  ChartIcon,
+  ClipboardIcon,
+  ClockIcon,
+  GridIcon,
+  LogoutIcon,
+  PackageIcon,
+  PesoIcon,
+  SettingsIcon,
+  StarIcon,
+  StoreIcon,
+  TagIcon,
+  UserIcon,
+  UsersIcon,
+} from "../icons";
 
 const menuGroups = [
   {
     title: "MAIN MENU",
     items: [
-      { label: "Dashboard", path: "/admin/dashboard", icon: "▦" },
+      { label: "Dashboard", path: "/admin/dashboard", icon: GridIcon },
     ],
   },
   {
     title: "MANAGEMENT",
     items: [
-      { label: "Users", path: "/admin/users", icon: "♙" },
-      { label: "Sellers", path: "/admin/sellers", icon: "♧" },
-      { label: "Shops", path: "/admin/shops", icon: "⌂" },
-      { label: "Categories", path: "/admin/categories", icon: "▤" },
-      { label: "Products", path: "/admin/products", icon: "□" },
-      { label: "Orders", path: "/admin/orders", icon: "▣" },
-      { label: "Transactions", path: "/admin/transactions", icon: "₱" },
-      { label: "Reviews", path: "/admin/reviews", icon: "☆" },
+      { label: "Users", path: "/admin/users", icon: UsersIcon },
+      { label: "Sellers", path: "/admin/sellers", icon: UserIcon },
+      { label: "Shops", path: "/admin/shops", icon: StoreIcon },
+      { label: "Categories", path: "/admin/categories", icon: TagIcon },
+      { label: "Products", path: "/admin/products", icon: PackageIcon },
+      { label: "Orders", path: "/admin/orders", icon: ClipboardIcon },
+      { label: "Transactions", path: "/admin/transactions", icon: PesoIcon },
+      { label: "Reviews", path: "/admin/reviews", icon: StarIcon },
     ],
   },
   {
     title: "SYSTEM",
     items: [
-      { label: "Reports", path: "/admin/reports", icon: "▥" },
-      { label: "Notifications", path: "/admin/notifications", icon: "♧" },
-      { label: "Activity Logs", path: "/admin/activity-logs", icon: "◷" },
-      { label: "Settings", path: "/admin/settings", icon: "⚙" },
-      { label: "My Profile", path: "/admin/profile", icon: "♙" },
+      { label: "Reports", path: "/admin/reports", icon: ChartIcon },
+      { label: "Notifications", path: "/admin/notifications", icon: BellIcon },
+      { label: "Activity Logs", path: "/admin/activity-logs", icon: ClockIcon },
+      { label: "Settings", path: "/admin/settings", icon: SettingsIcon },
+      { label: "My Profile", path: "/admin/profile", icon: UserIcon },
     ],
   },
 ];
@@ -69,9 +85,7 @@ export default function AdminSidebar() {
                     }`
                   }
                 >
-                  <span className="w-5 text-center text-lg">
-                    {item.icon}
-                  </span>
+                  <item.icon width={18} height={18} className="shrink-0" />
                   {item.label}
                 </NavLink>
               ))}
@@ -85,7 +99,7 @@ export default function AdminSidebar() {
           onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
         >
-          <span className="text-lg">↪</span>
+          <LogoutIcon width={18} height={18} />
           Log Out
         </button>
       </div>

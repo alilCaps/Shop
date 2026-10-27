@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { HeartIcon } from "../icons";
+import { HeartIcon, StarIcon } from "../icons";
 import { formatCurrency, formatSold } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
 
@@ -26,7 +26,7 @@ export default function FlashSaleCard({ product, wished, onWishlist }) {
                     <p className="mt-2 text-lg font-semibold text-[#EE4D2D]">{formatCurrency(product.price)}</p>
                     <div className="mt-1 flex justify-between text-xs text-gray-500">
                         <span>
-                            <span className="text-amber-500">★</span> {Number(product.rating || 0).toFixed(1)}
+                            <span className="inline-flex items-center gap-1"><StarIcon width={12} height={12} className="text-amber-500" /> {Number(product.rating || 0).toFixed(1)}</span>
                         </span>
                         <span>{formatSold(product.sold)} sold</span>
                     </div>

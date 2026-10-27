@@ -4,6 +4,7 @@ import AddressForm, { addressLines } from "../../components/customer/AddressForm
 import { EmptyState, ErrorNote, Notice, Spinner } from "../../components/Feedback";
 import { useApi } from "../../hooks/useApi";
 import { api } from "../../services/api";
+import { MapPinIcon } from "../../components/icons";
 
 function Addresses({ user }) {
     const base = `/api/customer/${user.user_id}/addresses`;
@@ -69,7 +70,7 @@ function Addresses({ user }) {
             {loading ? (
                 <Spinner />
             ) : addresses.length === 0 && !editing ? (
-                <EmptyState icon="📍" title="You don't have any addresses yet." hint="Add one to speed up checkout." />
+                <EmptyState icon={<MapPinIcon width={30} height={30} />} title="You don't have any addresses yet." hint="Add one to speed up checkout." />
             ) : (
                 <ul className="divide-y divide-gray-100">
                     {addresses.map((address) => (

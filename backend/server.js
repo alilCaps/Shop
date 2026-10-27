@@ -10,12 +10,28 @@ const customerRoutes = require("./routes/customerRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
+const path = require("path");
 
 const app = express();
 const PORT = 5000;
 
 // Global middleware
 app.use(cors());
+
+// Image uploads use their own (larger) JSON parser, so mount them first.
+app.use("/api/uploads", uploadRoutes);
+
+// Uploaded images are public files.
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"), {
+        index: false,
+        maxAge: "7d",
+        setHeaders: (res) => res.setHeader("X-Content-Type-Options", "nosniff")
+    })
+);
+
 app.use(express.json());
 
 // Health check

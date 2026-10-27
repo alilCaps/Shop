@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CustomerLayout from "../../components/customer/CustomerLayout";
 import { Notice } from "../../components/Feedback";
+import { ImageUpload } from "../../components/ImageUpload";
 import { api, getStoredUser } from "../../services/api";
 
 const inputClass =
@@ -15,12 +16,10 @@ function ProfileForm({ user }) {
     });
     const [saving, setSaving] = useState(false);
     const [notice, setNotice] = useState(null);
-    const [imageBroken, setImageBroken] = useState(false);
 
     function change(event) {
         const { name, value } = event.target;
         setForm((previous) => ({ ...previous, [name]: value }));
-        if (name === "profile_image") setImageBroken(false);
         setNotice(null);
     }
 
@@ -33,14 +32,6 @@ function ProfileForm({ user }) {
 
         if (!payload.first_name || !payload.last_name) {
             setNotice({ type: "error", text: "First and last name are required." });
-            return;
-        }
-
-        if (payload.profile_image && !/^https?:\/\/\S+$/i.test(payload.profile_image)) {
-            setNotice({
-                type: "error",
-                text: "Profile image must be a link starting with http:// or https://."
-            });
             return;
         }
 
@@ -83,9 +74,6 @@ function ProfileForm({ user }) {
 
                     <dt><label htmlFor="phone" className="text-gray-500">Phone</label></dt>
                     <dd><input id="phone" name="phone" value={form.phone} onChange={change} maxLength={30} className={inputClass} /></dd>
-
-                    <dt><label htmlFor="profile_image" className="text-gray-500">Photo link</label></dt>
-                    <dd><input id="profile_image" name="profile_image" value={form.profile_image} onChange={change} placeholder="https://..." className={inputClass} /></dd>
                 </dl>
 
                 <button
@@ -98,19 +86,15 @@ function ProfileForm({ user }) {
             </div>
 
             <div className="flex flex-col items-center gap-3 border-gray-100 md:border-l">
-                <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-5xl">
-                    {form.profile_image && !imageBroken ? (
-                        <img
-                            src={form.profile_image}
-                            alt="Profile preview"
-                            onError={() => setImageBroken(true)}
-                            className="h-full w-full object-cover"
-                        />
-                    ) : (
-                        "👤"
-                    )}
-                </div>
-                <p className="text-xs text-gray-400">Preview</p>
+                <ImageUpload
+                    round
+                    label="Upload photo"
+                    value={form.profile_image}
+                    onChange={(url) => {
+                        setForm((previous) => ({ ...previous, profile_image: url }));
+                        setNotice(null);
+                    }}
+                />
             </div>
         </form>
     );

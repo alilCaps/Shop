@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import StatusBadge from "../../components/StatusBadge";
+import { ImageGalleryUpload } from "../../components/ImageUpload";
 import { api } from "../../services/api";
 import { formatCurrency } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
@@ -29,6 +30,7 @@ export default function SellerProducts() {
     const [form, setForm] = useState(EMPTY);
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
+    const [images, setImages] = useState([]);
 
     const load = useCallback(async () => {
         try {
@@ -53,6 +55,7 @@ export default function SellerProducts() {
     function openForm(product) {
         setFormError("");
         setEditing(product || "new");
+        setImages(product?.images || []);
         setForm(
             product
                 ? {
@@ -81,7 +84,8 @@ export default function SellerProducts() {
             ...form,
             category_id: Number(form.category_id),
             base_price: Number(form.base_price),
-            stock: Number(form.stock)
+            stock: Number(form.stock),
+            images
         };
 
         try {
@@ -169,7 +173,7 @@ export default function SellerProducts() {
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-3">
                                             <img
-                                                src={getProductImage(product.product_name)}
+                                                src={getProductImage(product.product_name, product.image_url)}
                                                 alt=""
                                                 className="h-12 w-12 rounded border border-gray-100 object-cover"
                                             />
@@ -225,6 +229,11 @@ export default function SellerProducts() {
                                 {formError}
                             </p>
                         )}
+
+                        <div>
+                            <p className="mb-1 text-xs text-gray-500">Pictures</p>
+                            <ImageGalleryUpload values={images} onChange={setImages} />
+                        </div>
 
                         <input name="product_name" required placeholder="Product name" value={form.product_name} onChange={change} className={input} />
 

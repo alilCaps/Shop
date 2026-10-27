@@ -16,6 +16,22 @@ const DEFAULT_SETTINGS = {
     free_shipping_minimum: 1000
 };
 
+// Accepts one of our uploaded files ("/uploads/<name>") or an http(s) link.
+// Returns the cleaned string, or null when it is not an acceptable image path.
+function cleanImagePath(value) {
+    if (typeof value !== "string") return null;
+
+    const text = value.trim();
+
+    if (/^\/uploads\/[A-Za-z0-9_\-./]{1,200}$/.test(text) && !text.includes("..")) {
+        return text;
+    }
+
+    if (/^https?:\/\/\S{1,480}$/i.test(text)) return text;
+
+    return null;
+}
+
 function validId(value) {
     return /^\d+$/.test(String(value)) && Number(value) > 0;
 }
@@ -171,6 +187,7 @@ const ORDER_TRANSITIONS = {
 };
 
 module.exports = {
+    cleanImagePath,
     pdb,
     PAYMENT_METHODS,
     ORDER_TRANSITIONS,

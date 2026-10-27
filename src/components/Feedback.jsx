@@ -1,3 +1,5 @@
+import { PackageIcon } from "./icons";
+
 // Small shared pieces for loading / error / empty states.
 export function Spinner({ label = "Loading..." }) {
     return (
@@ -41,10 +43,16 @@ export function Notice({ notice }) {
     );
 }
 
-export function EmptyState({ icon = "📦", title, hint, children }) {
+export function EmptyState({ icon, title, hint, children }) {
     return (
         <div className="px-4 py-14 text-center">
-            <p className="text-5xl">{icon}</p>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fff1ed] text-[#EE4D2D]">
+                {typeof icon === "string" ? (
+                    <span className="text-3xl" aria-hidden="true">{icon}</span>
+                ) : (
+                    icon || <PackageIcon width={30} height={30} />
+                )}
+            </div>
             <p className="mt-3 text-sm text-gray-700">{title}</p>
             {hint && <p className="mt-1 text-xs text-gray-400">{hint}</p>}
             {children && <div className="mt-5">{children}</div>}

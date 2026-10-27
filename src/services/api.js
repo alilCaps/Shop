@@ -81,3 +81,62 @@ export async function api(path, { method = "GET", body, headers } = {}) {
 export function notifyCartChanged() {
     window.dispatchEvent(new Event("cart:updated"));
 }
+
+// Uploaded pictures are stored as "/uploads/<file>" and served by the API.
+export function assetUrl(path) {
+    if (!path) return "";
+
+    return path.startsWith("/uploads/") ? `${API_URL}${path}` : path;
+}
+
+const MAX_SIDE = 1280;
+const MAX_BYTES = 5 * 1024 * 1024;
+
+function readAsDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Could not read that file."));
+        reader.readAsDataURL(blob);
+    });
+}
+
+// Shrinks big photos in the browser first so uploads stay fast.
+async function shrink(file) {
+    if (file.type === "image/gif") return file;
+
+    const bitmap = await createImageBitmap(file).catch(() => null);
+
+    if (!bitmap) throw new Error("That file is not a readable image.");
+
+    const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+    const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, 0.88));
+
+    return blob || file;
+}
+
+// Uploads one image file and resolves with its stored path ("/uploads/...").
+export async function uploadImage(file) {
+    if (!file || !/^image\/(png|jpe?g|gif|webp)$/.test(file.type)) {
+        throw new Error("Choose a PNG, JPG, GIF or WebP image.");
+    }
+
+    const blob = await shrink(file);
+
+    if (blob.size > MAX_BYTES) {
+        throw new Error("That image is too large (5 MB maximum).");
+    }
+
+    const { url } = await api("/api/uploads", {
+        method: "POST",
+        body: { data: await readAsDataUrl(blob) }
+    });
+
+    return url;
+}
