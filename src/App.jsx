@@ -39,12 +39,13 @@ import {
   AdminOrders,
   AdminTransactions,
   AdminReviews,
-  AdminReports,
+  AdminReturns,
   AdminNotifications,
   AdminActivityLogs,
   AdminSettings,
-  AdminProfile,
 } from "./views/admin/AdminPages.jsx";
+import AdminReports from "./views/admin/AdminReports.jsx";
+import AdminProfile from "./views/admin/AdminProfile.jsx";
 
 export default function App() {
   return (
@@ -96,6 +97,7 @@ export default function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="transactions" element={<AdminTransactions />} />
         <Route path="reviews" element={<AdminReviews />} />
+        <Route path="returns" element={<AdminReturns />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="activity-logs" element={<AdminActivityLogs />} />
