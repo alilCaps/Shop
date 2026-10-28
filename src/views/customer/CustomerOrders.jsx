@@ -12,6 +12,7 @@ import {
 } from "../../utils/format";
 import { getProductImage } from "../../utils/productImages";
 import { CheckIcon, StarIcon, StoreIcon } from "../../components/icons";
+import ReturnRequestModal from "../../components/ReturnRequestModal";
 
 const TABS = [
     { key: "ALL", label: "All", match: () => true },
@@ -72,6 +73,7 @@ function ReviewForm({ onSubmit, onCancel, busy }) {
 function OrderCard({ order, userId, onChanged, setNotice }) {
     const [busy, setBusy] = useState(false);
     const [reviewing, setReviewing] = useState(null);
+    const [returning, setReturning] = useState(false);
     const base = `/api/customer/${userId}/orders/${order.order_id}`;
 
     async function run(path, body, success) {
@@ -138,9 +140,9 @@ function OrderCard({ order, userId, onChanged, setNotice }) {
                                             <button
                                                 type="button"
                                                 onClick={() => setReviewing(item.order_item_id)}
-                                                className="text-xs text-[#EE4D2D] hover:underline"
+                                                className="inline-flex items-center gap-1 rounded border border-[#EE4D2D] px-3 py-1 text-xs font-medium text-[#EE4D2D] hover:bg-orange-50"
                                             >
-                                                Rate
+                                                <StarIcon width={12} height={12} /> Write a review
                                             </button>
                                         )}
                                     </div>
@@ -218,6 +220,22 @@ function OrderCard({ order, userId, onChanged, setNotice }) {
                             Order received
                         </button>
                     )}
+                    {["DELIVERED", "COMPLETED"].includes(status) && (
+                        order.return_info?.latest_return &&
+                        !["REJECTED", "CANCELLED"].includes(order.return_info.latest_return.status) ? (
+                            <Link to="/customer/returns" className={`${button} border border-gray-300 hover:bg-gray-50`}>
+                                Return: {order.return_info.latest_return.status.replace(/_/g, " ").toLowerCase()}
+                            </Link>
+                        ) : order.return_info?.can_return ? (
+                            <button type="button" onClick={() => setReturning(true)} className={`${button} border border-gray-300 hover:bg-gray-50`}>
+                                Return / refund
+                            </button>
+                        ) : (
+                            <button type="button" disabled title="Returns are accepted within 3 days of delivery" className={`${button} border border-gray-200 text-gray-400`}>
+                                Return window closed (3 days)
+                            </button>
+                        )
+                    )}
                     {["COMPLETED", "CANCELLED"].includes(status) && order.items[0] && (
                         <Link
                             to={`/product/${order.items[0].product_id}`}
@@ -228,6 +246,18 @@ function OrderCard({ order, userId, onChanged, setNotice }) {
                     )}
                 </div>
             </footer>
+            {returning && (
+                <ReturnRequestModal
+                    order={order}
+                    userId={userId}
+                    onClose={() => setReturning(false)}
+                    onDone={(message) => {
+                        setReturning(false);
+                        setNotice({ type: "success", text: message });
+                        onChanged();
+                    }}
+                />
+            )}
         </article>
     );
 }

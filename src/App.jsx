@@ -16,6 +16,8 @@ import SellerShop from "./views/seller/SellerShop.jsx";
 import SellerProducts from "./views/seller/SellerProducts.jsx";
 import SellerOrders from "./views/seller/SellerOrders.jsx";
 import SellerNotifications from "./views/seller/SellerNotifications.jsx";
+import SellerReturns from "./views/seller/SellerReturns.jsx";
+import CustomerReturns from "./views/customer/CustomerReturns.jsx";
 
 import CustomerDashboard from "./views/customer/CustomerDashboard.jsx";
 import CustomerProfile from "./views/customer/CustomerProfile.jsx";
@@ -62,6 +64,7 @@ export default function App() {
         <Route path="shop" element={<SellerShop />} />
         <Route path="products" element={<SellerProducts />} />
         <Route path="orders" element={<SellerOrders />} />
+        <Route path="returns" element={<SellerReturns />} />
         <Route path="notifications" element={<SellerNotifications />} />
       </Route>
       <Route
@@ -73,6 +76,7 @@ export default function App() {
       <Route path="/customer/dashboard" element={<CustomerDashboard />} />
       <Route path="/customer/profile" element={<CustomerProfile />} />
       <Route path="/customer/orders" element={<MyOrders />} />
+      <Route path="/customer/returns" element={<CustomerReturns />} />
       <Route path="/customer/wishlist" element={<CustomerWishlist />} />
       <Route path="/customer/addresses" element={<CustomerAddresses />} />
       <Route path="/customer/payments" element={<CustomerPayments />} />
