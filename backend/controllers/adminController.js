@@ -183,10 +183,27 @@ exports.updateUser = async (req, res) => {
     }
   }
 
+  if (body.phone !== undefined) {
+    if (body.phone !== null && typeof body.phone !== "string") {
+      return res.status(400).json({ message: "Phone must be text." });
+    }
+
+    const phone = (body.phone || "").trim();
+
+    if (phone.length > 30) {
+      return res.status(400).json({
+        message: "Phone number must not exceed 30 characters.",
+      });
+    }
+
+    body.phone = phone || null;
+  }
+
   const fields = [];
   const values = buildUpdate(fields, body, [
     "first_name",
     "last_name",
+    "phone",
     "status",
   ]);
 
@@ -944,56 +961,6 @@ exports.getActivityLogs = async (req, res) => {
     `);
 
     return res.json({ data: rows });
-  } catch (error) {
-    return sendDatabaseError(res, error);
-  }
-};
-
-// --------------------------------------------------
-// REPORTS
-// GET /api/admin/reports
-// --------------------------------------------------
-exports.getReports = async (req, res) => {
-  try {
-    const [ordersByStatus, productsByStatus, usersByStatus, sales] =
-      await Promise.all([
-        query(`
-          SELECT status, COUNT(*) AS total
-          FROM orders
-          GROUP BY status
-          ORDER BY status
-        `),
-        query(`
-          SELECT status, COUNT(*) AS total
-          FROM products
-          GROUP BY status
-          ORDER BY status
-        `),
-        query(`
-          SELECT status, COUNT(*) AS total
-          FROM users
-          GROUP BY status
-          ORDER BY status
-        `),
-        query(`
-          SELECT
-            COUNT(*) AS order_count,
-            COALESCE(SUM(total_amount), 0) AS order_value
-          FROM orders
-          WHERE status IN (
-            'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'COMPLETED'
-          )
-        `),
-      ]);
-
-    return res.json({
-      data: {
-        orders_by_status: ordersByStatus,
-        products_by_status: productsByStatus,
-        users_by_status: usersByStatus,
-        sales_summary: sales[0],
-      },
-    });
   } catch (error) {
     return sendDatabaseError(res, error);
   }

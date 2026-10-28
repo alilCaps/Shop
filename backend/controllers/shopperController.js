@@ -10,6 +10,7 @@ const {
     restoreStock,
     closePaymentOnCancel
 } = require("../utils/helpers");
+const { attachReturnInfo } = require("../utils/returns");
 
 const IMAGE_SQL = `(
     SELECT pi.image_url
@@ -816,6 +817,8 @@ exports.listOrders = handler(async function listOrders(req, res) {
         return res.json({ orders });
     }
 
+    const withReturns = await attachReturnInfo(pdb, orders);
+
     const ids = orders.map((order) => order.order_id);
 
     const [items] = await pdb.query(
@@ -840,7 +843,7 @@ exports.listOrders = handler(async function listOrders(req, res) {
     );
 
     res.json({
-        orders: orders.map((order) => ({
+        orders: withReturns.map((order) => ({
             ...order,
             shop_name:
                 items.find((item) => item.order_id === order.order_id)
