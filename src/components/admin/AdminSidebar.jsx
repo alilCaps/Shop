@@ -10,6 +10,7 @@ import {
   LogoutIcon,
   PackageIcon,
   PesoIcon,
+  RefreshIcon,
   SettingsIcon,
   StarIcon,
   StoreIcon,
@@ -36,6 +37,7 @@ const menuGroups = [
       { label: "Orders", path: "/admin/orders", icon: ClipboardIcon },
       { label: "Transactions", path: "/admin/transactions", icon: PesoIcon },
       { label: "Reviews", path: "/admin/reviews", icon: StarIcon },
+      { label: "Returns", path: "/admin/returns", icon: RefreshIcon },
     ],
   },
   {

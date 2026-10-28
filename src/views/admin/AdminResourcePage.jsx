@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { adminService } from "../../services/adminService.js";
 import AdminPageHeader from "../../components/admin/AdminPageHeader.jsx";
 import AdminDataTable from "../../components/admin/AdminDataTable.jsx";
+import AdminFormModal from "../../components/admin/AdminFormModal.jsx";
+import ConfirmDialog from "../../components/admin/ConfirmDialog.jsx";
 
 export default function AdminResourcePage({ config }) {
   const [rows, setRows] = useState([]);
@@ -11,6 +13,8 @@ export default function AdminResourcePage({ config }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [modal, setModal] = useState(null);
+  const [lookups, setLookups] = useState({});
 
   const loadRecords = useCallback(async () => {
     setLoading(true);
@@ -34,6 +38,30 @@ export default function AdminResourcePage({ config }) {
     }
   }, [config.resource]);
 
+  // Dropdowns that list other records (e.g. parent category).
+  useEffect(() => {
+    const fields = [...(config.createFields || []), ...(config.editableFields || [])];
+    const sources = fields.filter((field) => field.optionsFrom);
+
+    sources.forEach(async (field) => {
+      try {
+        const result = await adminService.getResource(field.optionsFrom.resource);
+        const list = Array.isArray(result) ? result : result.data ?? [];
+
+        setLookups((current) => ({
+          ...current,
+          [field.key]: list.map((item) => ({
+            value: String(item[field.optionsFrom.valueKey]),
+            label: item[field.optionsFrom.labelKey],
+            id: item[field.optionsFrom.valueKey],
+          })),
+        }));
+      } catch {
+        /* the dropdown just stays empty */
+      }
+    });
+  }, [config]);
+
   useEffect(() => {
     loadRecords();
   }, [loadRecords]);
@@ -56,89 +84,50 @@ export default function AdminResourcePage({ config }) {
     });
   }, [rows, search, statusFilter, config.columns]);
 
-  async function handleEdit(row) {
+  function handleEdit(row) {
     if (!config.editableFields?.length) {
       setNotice("Editing has not been configured for this page yet.");
       return;
     }
 
-    const changes = {};
-
-    for (const field of config.editableFields) {
-      const currentValue = row[field.key] ?? "";
-      const answer = window.prompt(
-        `Enter ${field.label}:`,
-        String(currentValue)
-      );
-
-      if (answer === null) return;
-      changes[field.key] = answer;
-    }
-
-    try {
-      await adminService.updateResource(
-        config.resource,
-        row[config.idKey],
-        changes
-      );
-
-      setNotice("Record updated successfully.");
-      await loadRecords();
-    } catch (err) {
-      setNotice(err.message || "Unable to update record.");
-    }
+    setModal({ mode: "edit", row });
   }
 
-  async function handleCreate() {
-    if (!config.createFields?.length) {
-      setNotice("Creating records has not been configured for this page yet.");
-      return;
-    }
+  function handleCreate() {
+    setModal({ mode: "create" });
+  }
 
-    const payload = {};
+  function handleDelete(row) {
+    if (config.allowDelete) setModal({ mode: "delete", row });
+  }
 
-    for (const field of config.createFields) {
-      const answer = window.prompt(`${field.label}:`);
-
-      if (answer === null) return;
-
-      if (field.required && !answer.trim()) {
-        setNotice(`${field.label} is required.`);
-        return;
-      }
-
-      payload[field.key] = answer.trim();
-    }
-
-    try {
+  async function saveModal(payload) {
+    if (modal.mode === "create") {
       await adminService.createResource(config.resource, payload);
       setNotice("Record created successfully.");
-      await loadRecords();
-    } catch (err) {
-      setNotice(err.message || "Unable to create record.");
+    } else {
+      await adminService.updateResource(
+        config.resource,
+        modal.row[config.idKey],
+        payload
+      );
+      setNotice("Record updated successfully.");
     }
+
+    setModal(null);
+    await loadRecords();
   }
 
-  async function handleDelete(row) {
-    if (!config.allowDelete) return;
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete this ${config.singularLabel.toLowerCase()}?`
-    );
-
-    if (!confirmed) return;
-
+  async function confirmDelete() {
     try {
-      await adminService.deleteResource(
-        config.resource,
-        row[config.idKey]
-      );
-
+      await adminService.deleteResource(config.resource, modal.row[config.idKey]);
       setNotice("Record deleted successfully.");
-      await loadRecords();
     } catch (err) {
       setNotice(err.message || "Unable to delete record.");
     }
+
+    setModal(null);
+    await loadRecords();
   }
 
   return (
@@ -202,6 +191,41 @@ export default function AdminResourcePage({ config }) {
       <p className="mb-3 text-sm text-gray-500">
         Showing {filteredRows.length} of {rows.length} records
       </p>
+
+      {modal && modal.mode !== "delete" && (
+        <AdminFormModal
+          key={`${modal.mode}-${modal.row?.[config.idKey] ?? "new"}`}
+          title={
+            modal.mode === "create"
+              ? `Add ${config.singularLabel}`
+              : `Edit ${config.singularLabel}`
+          }
+          fields={modal.mode === "create" ? config.createFields : config.editableFields}
+          record={modal.mode === "edit" ? modal.row : null}
+          optionsByField={Object.fromEntries(
+            Object.entries(lookups).map(([key, list]) => [
+              key,
+              modal.row
+                ? list.filter((o) => o.id !== modal.row[config.idKey])
+                : list,
+            ])
+          )}
+          submitLabel={modal.mode === "create" ? `Add ${config.singularLabel}` : "Save changes"}
+          onClose={() => setModal(null)}
+          onSubmit={saveModal}
+        />
+      )}
+
+      {modal?.mode === "delete" && (
+        <ConfirmDialog
+          title={`Delete ${config.singularLabel}`}
+          message={`Are you sure you want to delete this ${config.singularLabel.toLowerCase()}? This cannot be undone.`}
+          confirmLabel="Delete"
+          danger
+          onConfirm={confirmDelete}
+          onClose={() => setModal(null)}
+        />
+      )}
 
       <AdminDataTable
         columns={config.columns}

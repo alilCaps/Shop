@@ -17,6 +17,7 @@ import {
     HomeIcon,
     LogoutIcon,
     PackageIcon,
+    RefreshIcon,
     StoreIcon
 } from "../icons";
 
@@ -25,6 +26,7 @@ const MENU = [
     { to: "/seller/shop", label: "My Shop", icon: StoreIcon },
     { to: "/seller/products", label: "Products", icon: PackageIcon },
     { to: "/seller/orders", label: "Orders", icon: ClipboardIcon },
+    { to: "/seller/returns", label: "Returns", icon: RefreshIcon },
     { to: "/seller/notifications", label: "Notifications", icon: BellIcon }
 ];
 

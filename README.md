@@ -49,3 +49,11 @@ A new seller creates a shop in the Seller Centre; it stays *Pending* until an ad
 
 Everything except `/login`, `/signup`, `GET /api/products`, `GET /api/products/:id` and `GET /api/categories` needs `Authorization: Bearer <token>` (returned by `/login`).
 `/api/customer/:userId/*`, `/api/seller/:userId/*`, `/api/admin/*` and `/api/notifications` are role-checked on the server.
+
+## Returns, reviews and admin tools
+
+- **Reviews:** after an order is delivered, each item shows a "Write a review" button in *My orders*. One review per purchased item.
+- **Returns:** customers can request a return or refund within **3 days of delivery** (`RETURN_WINDOW_DAYS` in `backend/utils/returns.js`). After that the button shows "Return window closed". Flow: requested → approved → item shipped → received → completed (refund recorded, stock restored). Customers use *Returns* in the sidebar, sellers use *Returns* in Seller Centre, admins use *Returns* in the admin sidebar.
+- **Shop link:** the customer sidebar has a *Shop* link to browse products.
+- **Admin forms:** add/edit/delete use form and confirmation modals (no browser prompts).
+- **Admin API:** `GET/PUT /api/admin/profile`, `PUT /api/admin/profile/password`, `GET /api/admin/reports?from=YYYY-MM-DD&to=YYYY-MM-DD`, `GET/PUT /api/admin/returns`.
