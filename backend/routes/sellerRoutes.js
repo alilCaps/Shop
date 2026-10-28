@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const seller = require("../controllers/sellerController");
+const returns = require("../controllers/returnController");
 const { authenticate } = require("../utils/auth");
 const { requireUser } = require("../utils/helpers");
 
@@ -23,5 +24,8 @@ router.delete("/:userId/products/:productId", guard, seller.archiveProduct);
 
 router.get("/:userId/orders", guard, seller.listOrders);
 router.put("/:userId/orders/:orderId/status", guard, seller.updateOrderStatus);
+
+router.get("/:userId/returns", guard, returns.listShopReturns);
+router.put("/:userId/returns/:returnId", guard, returns.updateShopReturn);
 
 module.exports = router;

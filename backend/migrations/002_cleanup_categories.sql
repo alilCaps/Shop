@@ -33,7 +33,7 @@ SET @has_col = (
 );
 SET @sql = IF(@has_col = 0,
   'ALTER TABLE categories
-     ADD COLUMN parent_key int GENERATED ALWAYS AS (IFNULL(parent_category_id, 0)) STORED,
+     ADD COLUMN parent_key int GENERATED ALWAYS AS (IFNULL(parent_category_id, 0)) VIRTUAL,
      ADD UNIQUE KEY uq_category_name_per_parent (parent_key, category_name)',
   'SELECT 1');
 PREPARE stmt FROM @sql;

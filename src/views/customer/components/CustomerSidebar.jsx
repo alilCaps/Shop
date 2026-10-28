@@ -8,6 +8,8 @@ import {
     LogoutIcon,
     MapPinIcon,
     PackageIcon,
+    RefreshIcon,
+    StoreIcon,
     UserIcon
 } from "../../../components/icons";
 
@@ -19,9 +21,11 @@ function CustomerSidebar({
     onLogout
 }) {
     const menuItems = [
+        { name: "Shop", icon: StoreIcon, path: "/search" },
         { name: "Account overview", icon: GridIcon, path: "/customer/dashboard" },
         { name: "My profile", icon: UserIcon, path: "/customer/profile" },
         { name: "My orders", icon: PackageIcon, path: "/customer/orders" },
+        { name: "Returns", icon: RefreshIcon, path: "/customer/returns" },
         { name: "Notifications", icon: BellIcon, path: "/customer/notifications" },
         { name: "Wishlist", icon: HeartIcon, path: "/customer/wishlist" },
         { name: "Addresses", icon: MapPinIcon, path: "/customer/addresses" },

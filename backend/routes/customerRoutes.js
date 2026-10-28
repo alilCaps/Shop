@@ -7,6 +7,7 @@ const {
 } = require("../controllers/customerController");
 
 const shopper = require("../controllers/shopperController");
+const returns = require("../controllers/returnController");
 const { authenticate } = require("../utils/auth");
 const { requireUser } = require("../utils/helpers");
 
@@ -27,6 +28,12 @@ router.post(
     requireUser,
     shopper.reviewItem
 );
+
+// Returns / refunds (3 days after delivery)
+router.post("/:userId/orders/:orderId/return", requireUser, returns.createReturn);
+router.get("/:userId/returns", requireUser, returns.listCustomerReturns);
+router.post("/:userId/returns/:returnId/cancel", requireUser, returns.cancelReturn);
+router.post("/:userId/returns/:returnId/ship-back", requireUser, returns.shipBackReturn);
 
 // Cart
 router.get("/:userId/cart", requireUser, shopper.getCart);

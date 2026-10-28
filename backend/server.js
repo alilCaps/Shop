@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const adminReturnRoutes = require("./routes/adminReturnRoutes");
 const path = require("path");
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customer", customerRoutes);
+app.use("/api/admin/returns", adminReturnRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/notifications", notificationRoutes);

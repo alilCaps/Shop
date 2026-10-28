@@ -18,6 +18,7 @@ router.put("/users/:userId", adminController.updateUser);
 
 // Seller management
 router.get("/sellers", adminController.getSellers);
+router.put("/sellers/:userId", adminController.updateUser);
 
 // Shop management
 router.get("/shops", adminController.getShops);
@@ -51,11 +52,16 @@ router.put(
 router.get("/activity-logs", adminController.getActivityLogs);
 
 // Reports
-router.get("/reports", adminController.getReports);
+router.get("/reports", adminExtra.getReports);
 
 // Transactions
 router.get("/transactions", adminController.getTransactions);
 router.put("/transactions/:paymentId", adminController.updateTransaction);
+
+// Admin profile (the logged-in administrator)
+router.get("/profile", adminExtra.getProfile);
+router.put("/profile", adminExtra.updateProfile);
+router.put("/profile/password", adminExtra.changePassword);
 
 // System settings
 router.get("/settings", adminExtra.getSettings);
