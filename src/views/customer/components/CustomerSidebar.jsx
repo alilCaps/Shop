@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl } from "../../../services/api";
 import {
@@ -10,14 +11,16 @@ import {
     PackageIcon,
     RefreshIcon,
     StoreIcon,
-    UserIcon
+    UserIcon,
+    XIcon
 } from "../../../components/icons";
 
 function CustomerSidebar({
     user,
     displayName,
     activeMenu,
-    setActiveMenu,
+    open,
+    onClose,
     onLogout
 }) {
     const menuItems = [
@@ -32,65 +35,95 @@ function CustomerSidebar({
         { name: "Payments", icon: CreditCardIcon, path: "/customer/payments" }
     ];
 
+    useEffect(() => {
+        if (!open) return undefined;
+
+        const onKey = (event) => {
+            if (event.key === "Escape") onClose();
+        };
+
+        document.addEventListener("keydown", onKey);
+
+        return () => document.removeEventListener("keydown", onKey);
+    }, [open, onClose]);
+
     return (
-        <aside className="box-border w-full min-w-0 self-start overflow-hidden rounded-lg bg-white shadow-sm lg:w-48 lg:min-w-48 lg:max-w-48">
-            {/* PROFILE */}
-            <div className="hidden border-b border-gray-100 p-4 lg:block">
-                <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center text-xl overflow-hidden shrink-0">
+        <>
+            {open && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/40"
+                    onClick={onClose}
+                    aria-hidden="true"
+                />
+            )}
+
+            <aside
+                aria-label="Account menu"
+                aria-hidden={!open}
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 ${
+                    open ? "translate-x-0" : "-translate-x-full invisible"
+                }`}
+            >
+                {/* PROFILE */}
+                <div className="flex items-center gap-3 border-b border-gray-100 p-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200">
                         {user?.profile_image ? (
                             <img
                                 src={assetUrl(user.profile_image)}
                                 alt="Profile"
-                                className="w-full h-full object-cover"
+                                className="h-full w-full object-cover"
                             />
                         ) : (
                             <UserIcon width={22} height={22} className="text-gray-500" />
                         )}
                     </div>
 
-                    <div className="min-w-0">
-                        <h3 className="font-semibold text-sm truncate">
-                            {displayName}
-                        </h3>
-
-                        <p className="text-xs text-gray-500">
-                            Customer account
-                        </p>
+                    <div className="min-w-0 flex-1">
+                        <h3 className="truncate text-sm font-semibold">{displayName}</h3>
+                        <p className="text-xs text-gray-500">Customer account</p>
                     </div>
-                </div>
-            </div>
 
-            {/* MENU */}
-            <nav className="flex gap-1 overflow-x-auto p-2 lg:block lg:overflow-visible">
-                {menuItems.map((item) => (
-                    <Link
-                        key={item.name}
-                        to={item.path}
-                        onClick={() => setActiveMenu(item.name)}
-                        className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2.5 rounded-md text-sm transition lg:w-full lg:gap-3 lg:py-3 ${
-                            activeMenu === item.name
-                                ? "bg-[#fff1ed] text-[#EE4D2D]"
-                                : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close menu"
+                        className="rounded p-1 text-gray-500 hover:bg-gray-100"
                     >
-                        <item.icon width={18} height={18} className="shrink-0" />
+                        <XIcon width={18} height={18} />
+                    </button>
+                </div>
 
-                        <span>{item.name}</span>
-                    </Link>
-                ))}
+                {/* MENU */}
+                <nav className="flex-1 p-2">
+                    {menuItems.map((item) => (
+                        <Link
+                            key={item.name}
+                            to={item.path}
+                            onClick={onClose}
+                            className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition ${
+                                activeMenu === item.name
+                                    ? "bg-[#fff1ed] text-[#EE4D2D]"
+                                    : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                        >
+                            <item.icon width={18} height={18} className="shrink-0" />
+                            <span>{item.name}</span>
+                        </Link>
+                    ))}
+                </nav>
 
-                {/* LOGOUT */}
-                <button
-                    type="button"
-                    onClick={onLogout}
-                    className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 lg:w-full lg:gap-3 lg:py-3"
-                >
-                    <LogoutIcon width={18} height={18} className="shrink-0" />
-                    <span>Logout</span>
-                </button>
-            </nav>
-        </aside>
+                <div className="border-t border-gray-100 p-2">
+                    <button
+                        type="button"
+                        onClick={onLogout}
+                        className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                        <LogoutIcon width={18} height={18} className="shrink-0" />
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </aside>
+        </>
     );
 }
 

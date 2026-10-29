@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StoreHeader from "../store/StoreHeader";
+import { MenuIcon } from "../icons";
 import CustomerSidebar from "../../views/customer/components/CustomerSidebar";
 import {
     api,
@@ -22,6 +23,7 @@ export default function CustomerLayout({
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         const stored = getStoredUser();
@@ -71,24 +73,36 @@ export default function CustomerLayout({
             <StoreHeader />
 
             <main className="mx-auto max-w-300 px-4 py-6">
-                <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[192px_minmax(0,1fr)]">
+                <div>
                     <CustomerSidebar
                         user={user}
                         displayName={displayName}
                         activeMenu={activeMenu}
-                        setActiveMenu={() => {}}
+                        open={menuOpen}
+                        onClose={() => setMenuOpen(false)}
                         onLogout={handleLogout}
                     />
 
                     <section className="min-w-0 overflow-hidden rounded-lg bg-white shadow-sm">
                         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 p-5">
-                            <div>
-                                <h1 className="text-xl font-medium">{title}</h1>
-                                {subtitle && (
-                                    <p className="mt-1 text-sm text-gray-500">
-                                        {subtitle}
-                                    </p>
-                                )}
+                            <div className="flex min-w-0 items-start gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setMenuOpen(true)}
+                                    aria-label="Open account menu"
+                                    aria-expanded={menuOpen}
+                                    className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50"
+                                >
+                                    <MenuIcon width={20} height={20} />
+                                </button>
+                                <div className="min-w-0">
+                                    <h1 className="text-xl font-medium">{title}</h1>
+                                    {subtitle && (
+                                        <p className="mt-1 text-sm text-gray-500">
+                                            {subtitle}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                             {user && actions}
                         </div>
