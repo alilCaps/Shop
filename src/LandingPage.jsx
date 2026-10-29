@@ -154,10 +154,10 @@ export default function LandingPage() {
 
                 {/* Hero */}
                 <section className="grid gap-4 lg:grid-cols-[1fr_290px]">
-                    <div className="relative min-h-80 overflow-hidden rounded-2xl bg-linear-to-br from-[#c93a1e] via-[#EE4D2D] to-[#f58a63] p-8 text-white md:p-10">
+                    <div className="relative min-h-80 overflow-hidden rounded-2xl bg-linear-to-br from-[#c93a1e] via-[#EE4D2D] to-[#f58a63] p-6 text-white sm:p-8 md:p-10">
                         <div className="relative z-10 flex h-full max-w-md flex-col justify-center">
                             <p className="text-xs font-semibold tracking-widest text-orange-100">SUPER SHOPPING DAY</p>
-                            <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">
+                            <h1 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
                                 Big joy, bigger savings.
                             </h1>
                             <p className="mt-3 text-base text-orange-50">Up to 70% off + free shipping all day</p>
@@ -217,7 +217,7 @@ export default function LandingPage() {
 
                 {/* Categories */}
                 <section aria-labelledby="categories-title">
-                    <div className="mb-4 flex items-end justify-between">
+                    <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
                         <h2 id="categories-title" className="text-2xl font-bold">Shop by category</h2>
                         <Link to="/search" className="inline-flex items-center gap-1 text-xs font-semibold text-[#EE4D2D] hover:underline">
                             View all <ArrowRight width={14} height={14} />
@@ -237,8 +237,8 @@ export default function LandingPage() {
 
                 {/* Flash sale */}
                 <section id="flash-sale" aria-labelledby="flash-title" className="scroll-mt-24">
-                    <div className="mb-4 flex items-end justify-between">
-                        <div className="flex items-baseline gap-4">
+                    <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                             <h2 id="flash-title" className="text-2xl font-bold text-[#EE4D2D]">FLASH SALE</h2>
                             <span className="rounded bg-[#161a26] px-2 py-0.5 font-mono text-xs text-white" aria-label="Time left today">
                                 {countdown}
@@ -270,7 +270,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Perks */}
-                <section className="grid grid-cols-2 gap-6 rounded-xl bg-white px-6 py-5 shadow-sm lg:grid-cols-4">
+                <section className="grid grid-cols-2 gap-6 rounded-xl bg-white px-4 py-5 shadow-sm sm:px-6 lg:grid-cols-4">
                     {PERKS.map(({ icon: Icon, title, text }) => (
                         <div key={title} className="flex items-center gap-3">
                             <span className="text-[#EE4D2D]"><Icon width={26} height={26} /></span>

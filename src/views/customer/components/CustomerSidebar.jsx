@@ -35,7 +35,7 @@ function CustomerSidebar({
     return (
         <aside className="box-border w-full min-w-0 self-start overflow-hidden rounded-lg bg-white shadow-sm lg:w-48 lg:min-w-48 lg:max-w-48">
             {/* PROFILE */}
-            <div className="p-4 border-b border-gray-100">
+            <div className="hidden border-b border-gray-100 p-4 lg:block">
                 <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center text-xl overflow-hidden shrink-0">
                         {user?.profile_image ? (
@@ -62,13 +62,13 @@ function CustomerSidebar({
             </div>
 
             {/* MENU */}
-            <nav className="p-2">
+            <nav className="flex gap-1 overflow-x-auto p-2 lg:block lg:overflow-visible">
                 {menuItems.map((item) => (
                     <Link
                         key={item.name}
                         to={item.path}
                         onClick={() => setActiveMenu(item.name)}
-                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-md text-sm transition ${
+                        className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2.5 rounded-md text-sm transition lg:w-full lg:gap-3 lg:py-3 ${
                             activeMenu === item.name
                                 ? "bg-[#fff1ed] text-[#EE4D2D]"
                                 : "text-gray-700 hover:bg-gray-50"
@@ -84,7 +84,7 @@ function CustomerSidebar({
                 <button
                     type="button"
                     onClick={onLogout}
-                    className="w-full flex items-center gap-3 px-3 py-3 rounded-md text-sm text-left text-gray-700 hover:bg-gray-50"
+                    className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 lg:w-full lg:gap-3 lg:py-3"
                 >
                     <LogoutIcon width={18} height={18} className="shrink-0" />
                     <span>Logout</span>

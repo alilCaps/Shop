@@ -194,7 +194,7 @@ export default function ProductDetail() {
                     › {product.name}
                 </nav>
 
-                <section className="grid gap-8 rounded-sm bg-white p-5 shadow-sm md:grid-cols-[400px_minmax(0,1fr)]">
+                <section className="grid gap-8 rounded-sm bg-white p-5 shadow-sm md:grid-cols-2 lg:grid-cols-[400px_minmax(0,1fr)]">
                     <div>
                         <div className="flex h-96 items-center justify-center overflow-hidden rounded bg-white">
                             <img

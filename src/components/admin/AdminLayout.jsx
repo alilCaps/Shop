@@ -2,10 +2,12 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import { MenuIcon } from "../icons";
 
 export default function AdminLayout() {
   const location = useLocation();
   const [user, setUser] = useState(undefined);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let savedUser = null;
@@ -42,22 +44,32 @@ export default function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 flex min-h-20 flex-wrap items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4 lg:px-8">
-          <div>
+        <header className="sticky top-0 z-20 flex min-h-20 flex-wrap items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8 lg:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              className="rounded-lg border border-gray-200 p-2 text-gray-700 hover:bg-gray-50 lg:hidden"
+            >
+              <MenuIcon width={20} height={20} />
+            </button>
+            <div className="min-w-0">
             <p className="text-sm text-gray-500">Shopee / Administration</p>
             <h2 className="mt-1 text-lg font-semibold text-gray-800">
               Admin Panel
             </h2>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 font-bold text-[#EE4D2D]">
               {displayName.charAt(0).toUpperCase()}
             </div>
-            <div>
+            <div className="hidden sm:block">
               <p className="text-sm font-semibold text-gray-800">
                 {displayName}
               </p>
@@ -66,7 +78,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="p-5 md:p-8">
+        <main className="p-4 sm:p-5 md:p-8">
           <Outlet />
         </main>
       </div>

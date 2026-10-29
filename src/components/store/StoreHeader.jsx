@@ -54,7 +54,7 @@ export default function StoreHeader({ initialQuery = "" }) {
     return (
         <>
             <div className="bg-[#EE4D2D] text-xs text-white">
-                <div className="mx-auto flex min-h-8 max-w-300 items-center justify-between gap-3 px-4">
+                <div className="mx-auto flex min-h-8 max-w-300 flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-1">
                     <div className="flex items-center gap-3">
                         <Link to="/customer/notifications" className={topLink}>Notifications</Link>
                         {loggedIn && (
@@ -82,12 +82,12 @@ export default function StoreHeader({ initialQuery = "" }) {
             </div>
 
             <header className="sticky top-0 z-30 border-b border-gray-200 bg-white">
-                <div className="mx-auto flex min-h-17.5 max-w-300 items-center gap-6 px-4 py-3">
-                    <Logo className="w-28" />
+                <div className="mx-auto flex min-h-17.5 max-w-300 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-6">
+                    <Logo className="w-24 sm:w-28" />
 
                     <form
                         onSubmit={handleSearch}
-                        className="flex h-11 min-w-0 max-w-162.5 flex-1 items-center overflow-hidden rounded-lg bg-gray-100"
+                        className="order-3 flex h-11 w-full min-w-0 items-center overflow-hidden rounded-lg bg-gray-100 md:order-none md:w-auto md:max-w-162.5 md:flex-1"
                     >
                         <input
                             type="text"
@@ -106,7 +106,7 @@ export default function StoreHeader({ initialQuery = "" }) {
                         </button>
                     </form>
 
-                    <nav className="flex shrink-0 items-center gap-5 text-xs text-gray-600">
+                    <nav className="ml-auto flex shrink-0 items-center gap-4 text-xs text-gray-600 md:ml-0 md:gap-5">
                         <Link to="/search" className="hidden hover:text-[#EE4D2D] md:inline">Categories</Link>
                         <Link to="/#flash-sale" className="hidden hover:text-[#EE4D2D] md:inline">Flash Sale</Link>
                         <Link to="/search" className="hidden hover:text-[#EE4D2D] lg:inline">Shopee Mall</Link>
