@@ -3,7 +3,7 @@ import fb_icon from "./assets/icons/facebook_icon.png";
 import g_icon from "./assets/icons/google_icon.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { homeFor } from "./services/api";
+import { API_URL, homeFor } from "./services/api";
 
 function Login() {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ function Login() {
         setError("");
 
         try {
-            const response = await fetch("http://localhost:5000/login", {
+            const response = await fetch(`${API_URL}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

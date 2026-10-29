@@ -4,6 +4,7 @@ import g_icon from "./assets/icons/google_icon.png";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { API_URL } from "./services/api";
 
 function SignUp() {
 
@@ -34,7 +35,7 @@ function SignUp() {
 
         try {
 
-            const response = await fetch("http://localhost:5000/signup", {
+            const response = await fetch(`${API_URL}/signup`, {
                 method: "POST",
 
                 headers: {
