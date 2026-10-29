@@ -104,7 +104,7 @@ export default function SellerLayout() {
                             onClick={() => setMenuOpen(true)}
                             aria-label="Open menu"
                             aria-expanded={menuOpen}
-                            className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50"
+                            className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50 md:hidden"
                         >
                             <MenuIcon width={20} height={20} />
                         </button>
@@ -130,9 +130,10 @@ export default function SellerLayout() {
                 </div>
             </header>
 
+            <div className="mx-auto grid max-w-350 grid-cols-1 items-start gap-5 px-4 py-6 md:grid-cols-[200px_minmax(0,1fr)]">
             {menuOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/40"
+                    className="fixed inset-0 z-40 bg-black/40 md:hidden"
                     onClick={closeMenu}
                     aria-hidden="true"
                 />
@@ -140,12 +141,11 @@ export default function SellerLayout() {
 
             <aside
                 aria-label="Seller menu"
-                aria-hidden={!menuOpen}
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 ${
-                    menuOpen ? "translate-x-0" : "-translate-x-full invisible"
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 md:sticky md:top-20 md:z-auto md:w-auto md:max-w-none md:translate-x-0 md:overflow-visible md:rounded-lg md:shadow-sm ${
+                    menuOpen ? "translate-x-0" : "max-md:invisible max-md:-translate-x-full"
                 }`}
             >
-                <div className="flex items-center justify-between border-b border-gray-100 p-4">
+                <div className="flex items-center justify-between border-b border-gray-100 p-4 md:hidden">
                     <Logo to="/seller/dashboard" className="w-28" label="SELLER CENTRE" />
                     <button
                         type="button"
@@ -198,7 +198,6 @@ export default function SellerLayout() {
                 </div>
             </aside>
 
-            <div className="mx-auto max-w-350 px-4 py-6">
                 <main className="min-w-0">
                     {!ready ? (
                         <div className="flex min-h-60 items-center justify-center">

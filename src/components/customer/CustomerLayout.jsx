@@ -73,7 +73,7 @@ export default function CustomerLayout({
             <StoreHeader />
 
             <main className="mx-auto max-w-300 px-4 py-6">
-                <div>
+                <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[192px_minmax(0,1fr)]">
                     <CustomerSidebar
                         user={user}
                         displayName={displayName}
@@ -91,7 +91,7 @@ export default function CustomerLayout({
                                     onClick={() => setMenuOpen(true)}
                                     aria-label="Open account menu"
                                     aria-expanded={menuOpen}
-                                    className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50"
+                                    className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50 md:hidden"
                                 >
                                     <MenuIcon width={20} height={20} />
                                 </button>
