@@ -17,8 +17,10 @@ import {
     HomeIcon,
     LogoutIcon,
     PackageIcon,
+    MenuIcon,
     RefreshIcon,
-    StoreIcon
+    StoreIcon,
+    XIcon
 } from "../icons";
 
 const MENU = [
@@ -38,6 +40,7 @@ export default function SellerLayout() {
     const [shop, setShop] = useState(null);
     const [ready, setReady] = useState(false);
     const [error, setError] = useState("");
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const allowed = Boolean(user?.token) && roleOf(user) === "seller";
 
@@ -66,12 +69,26 @@ export default function SellerLayout() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allowed]);
 
+    useEffect(() => {
+        if (!menuOpen) return undefined;
+
+        const onKey = (event) => {
+            if (event.key === "Escape") setMenuOpen(false);
+        };
+
+        document.addEventListener("keydown", onKey);
+
+        return () => document.removeEventListener("keydown", onKey);
+    }, [menuOpen]);
+
     function logout() {
         clearSession();
         navigate("/login", { replace: true });
     }
 
     if (!allowed) return null;
+
+    const closeMenu = () => setMenuOpen(false);
 
     const name =
         [user.first_name, user.last_name].filter(Boolean).join(" ") ||
@@ -81,7 +98,18 @@ export default function SellerLayout() {
         <div className="min-h-screen bg-[#F5F5F5] text-gray-800">
             <header className="sticky top-0 z-30 border-b border-gray-200 bg-white">
                 <div className="mx-auto flex max-w-350 flex-wrap items-center justify-between gap-3 px-4 py-3">
-                    <Logo to="/seller/dashboard" className="w-28" label="SELLER CENTRE" />
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setMenuOpen(true)}
+                            aria-label="Open menu"
+                            aria-expanded={menuOpen}
+                            className="rounded-md border border-gray-200 p-2 text-gray-700 hover:bg-gray-50"
+                        >
+                            <MenuIcon width={20} height={20} />
+                        </button>
+                        <Logo to="/seller/dashboard" className="w-28" label="SELLER CENTRE" />
+                    </div>
 
                     <div className="flex items-center gap-3 text-sm">
                         {shop && (
@@ -102,45 +130,75 @@ export default function SellerLayout() {
                 </div>
             </header>
 
-            <div className="mx-auto grid max-w-350 grid-cols-1 items-start gap-5 px-4 py-6 lg:grid-cols-[200px_minmax(0,1fr)]">
-                <aside className="min-w-0 rounded-lg bg-white p-2 shadow-sm lg:sticky lg:top-20">
-                    <nav className="flex gap-1 overflow-x-auto lg:block lg:overflow-visible">
-                        {MENU.map((item) => (
-                            <NavLink
-                                key={item.to}
-                                to={item.to}
-                                className={({ isActive }) =>
-                                    `flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-sm transition lg:gap-3 lg:py-3 ${
-                                        isActive
-                                            ? "bg-[#fff1ed] text-[#EE4D2D]"
-                                            : "text-gray-700 hover:bg-gray-50"
-                                    }`
-                                }
-                            >
-                                <item.icon width={18} height={18} className="shrink-0" />
-                                {item.label}
-                            </NavLink>
-                        ))}
+            {menuOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/40"
+                    onClick={closeMenu}
+                    aria-hidden="true"
+                />
+            )}
 
-                        <Link
-                            to="/"
-                            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 lg:gap-3 lg:py-3"
+            <aside
+                aria-label="Seller menu"
+                aria-hidden={!menuOpen}
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 ${
+                    menuOpen ? "translate-x-0" : "-translate-x-full invisible"
+                }`}
+            >
+                <div className="flex items-center justify-between border-b border-gray-100 p-4">
+                    <Logo to="/seller/dashboard" className="w-28" label="SELLER CENTRE" />
+                    <button
+                        type="button"
+                        onClick={closeMenu}
+                        aria-label="Close menu"
+                        className="rounded p-1 text-gray-500 hover:bg-gray-100"
+                    >
+                        <XIcon width={18} height={18} />
+                    </button>
+                </div>
+
+                <nav className="flex-1 p-2">
+                    {MENU.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            onClick={closeMenu}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-md px-3 py-3 text-sm transition ${
+                                    isActive
+                                        ? "bg-[#fff1ed] text-[#EE4D2D]"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                }`
+                            }
                         >
-                            <HomeIcon width={18} height={18} className="shrink-0" />
-                            Back to store
-                        </Link>
+                            <item.icon width={18} height={18} className="shrink-0" />
+                            {item.label}
+                        </NavLink>
+                    ))}
 
-                        <button
-                            type="button"
-                            onClick={logout}
-                            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 lg:w-full lg:gap-3 lg:py-3"
-                        >
-                            <LogoutIcon width={18} height={18} className="shrink-0" />
-                            Logout
-                        </button>
-                    </nav>
-                </aside>
+                    <Link
+                        to="/"
+                        onClick={closeMenu}
+                        className="flex items-center gap-3 rounded-md px-3 py-3 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                        <HomeIcon width={18} height={18} className="shrink-0" />
+                        Back to store
+                    </Link>
+                </nav>
 
+                <div className="border-t border-gray-100 p-2">
+                    <button
+                        type="button"
+                        onClick={logout}
+                        className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                        <LogoutIcon width={18} height={18} className="shrink-0" />
+                        Logout
+                    </button>
+                </div>
+            </aside>
+
+            <div className="mx-auto max-w-350 px-4 py-6">
                 <main className="min-w-0">
                     {!ready ? (
                         <div className="flex min-h-60 items-center justify-center">
