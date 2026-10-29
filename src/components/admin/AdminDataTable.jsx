@@ -72,7 +72,46 @@ export default function AdminDataTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <>
+    {/* Phones: one card per record */}
+    <div className="space-y-3 md:hidden">
+      {rows.length === 0 ? (
+        <p className="rounded-xl border border-gray-200 bg-white px-5 py-10 text-center text-gray-500">
+          No records found.
+        </p>
+      ) : (
+        rows.map((row, index) => (
+          <article key={getRowId(row) ?? index} className="rounded-xl border border-gray-200 bg-white p-4">
+            <dl className="space-y-2 text-sm">
+              {columns.map((column) => (
+                <div key={column.key} className="flex justify-between gap-4">
+                  <dt className="shrink-0 text-xs uppercase tracking-wide text-gray-500">{column.label}</dt>
+                  <dd className="min-w-0 break-words text-right text-gray-800">
+                    {column.type === "status" ? <StatusBadge value={row[column.key]} /> : formatValue(row[column.key])}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            {(onEdit || onDelete) && (
+              <div className="mt-3 flex justify-end gap-2 border-t border-gray-100 pt-3">
+                {onEdit && (
+                  <button type="button" onClick={() => onEdit(row)} className="rounded-lg border border-orange-200 px-4 py-2 text-sm font-medium text-orange-600">
+                    Edit
+                  </button>
+                )}
+                {onDelete && (
+                  <button type="button" onClick={() => onDelete(row)} className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600">
+                    Delete
+                  </button>
+                )}
+              </div>
+            )}
+          </article>
+        ))
+      )}
+    </div>
+
+    <div className="hidden overflow-hidden rounded-xl border border-gray-200 bg-white md:block">
       <div className="overflow-x-auto">
         <table className="w-full min-w-full text-left text-sm">
           <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
@@ -108,7 +147,7 @@ export default function AdminDataTable({
                     const value = row[column.key];
 
                     return (
-                      <td key={column.key} className="px-5 py-4 text-gray-700">
+                      <td key={column.key} className="max-w-xs px-4 py-3 text-gray-700 lg:px-5 lg:py-4">
                         {column.type === "status" ? (
                           <StatusBadge value={value} />
                         ) : (
@@ -150,5 +189,6 @@ export default function AdminDataTable({
         </table>
       </div>
     </div>
+    </>
   );
 }

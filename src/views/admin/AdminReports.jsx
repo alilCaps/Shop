@@ -109,7 +109,7 @@ function Table({ title, headers, rows, empty = "No data for this period." }) {
       {rows.length === 0 ? (
         <p className="text-sm text-gray-500">{empty}</p>
       ) : (
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs uppercase text-gray-500">
               {headers.map((h, i) => (
@@ -126,7 +126,7 @@ function Table({ title, headers, rows, empty = "No data for this period." }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
     </div>
   );

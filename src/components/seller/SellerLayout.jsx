@@ -103,14 +103,14 @@ export default function SellerLayout() {
             </header>
 
             <div className="mx-auto grid max-w-350 grid-cols-1 items-start gap-5 px-4 py-6 lg:grid-cols-[200px_minmax(0,1fr)]">
-                <aside className="rounded-lg bg-white p-2 shadow-sm lg:sticky lg:top-20">
-                    <nav>
+                <aside className="min-w-0 rounded-lg bg-white p-2 shadow-sm lg:sticky lg:top-20">
+                    <nav className="flex gap-1 overflow-x-auto lg:block lg:overflow-visible">
                         {MENU.map((item) => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-3 rounded-md px-3 py-3 text-sm transition ${
+                                    `flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-sm transition lg:gap-3 lg:py-3 ${
                                         isActive
                                             ? "bg-[#fff1ed] text-[#EE4D2D]"
                                             : "text-gray-700 hover:bg-gray-50"
@@ -124,7 +124,7 @@ export default function SellerLayout() {
 
                         <Link
                             to="/"
-                            className="flex items-center gap-3 rounded-md px-3 py-3 text-sm text-gray-700 hover:bg-gray-50"
+                            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 lg:gap-3 lg:py-3"
                         >
                             <HomeIcon width={18} height={18} className="shrink-0" />
                             Back to store
@@ -133,7 +133,7 @@ export default function SellerLayout() {
                         <button
                             type="button"
                             onClick={logout}
-                            className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
+                            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 lg:w-full lg:gap-3 lg:py-3"
                         >
                             <LogoutIcon width={18} height={18} className="shrink-0" />
                             Logout

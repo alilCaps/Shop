@@ -52,7 +52,7 @@ const menuGroups = [
   },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ open = false, onClose = () => {} }) {
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -62,7 +62,19 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col self-start bg-white text-gray-700 shadow-lg">
+    <>
+    {open && (
+      <div
+        className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+    )}
+    <aside
+      className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 max-w-[85vw] shrink-0 flex-col bg-white text-gray-700 shadow-lg transition-transform duration-200 lg:sticky lg:top-0 lg:z-auto lg:max-w-none lg:translate-x-0 lg:self-start ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
       <div className="flex h-20 shrink-0 items-center border-b border-gray-100 px-6">
         <Logo to="/admin/dashboard" className="w-28" label="ADMIN PANEL" />
       </div>
@@ -79,6 +91,7 @@ export default function AdminSidebar() {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  onClick={onClose}
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                       isActive
@@ -106,5 +119,6 @@ export default function AdminSidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }

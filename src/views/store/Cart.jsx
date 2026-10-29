@@ -177,7 +177,7 @@ export default function Cart() {
                                                         className="h-4 w-4 accent-[#EE4D2D]"
                                                     />
 
-                                                    <Link to={`/product/${item.product_id}`} className="flex min-w-60 flex-1 items-center gap-3">
+                                                    <Link to={`/product/${item.product_id}`} className="flex min-w-40 flex-1 sm:min-w-60 items-center gap-3">
                                                         <img
                                                             src={getProductImage(item.product_name, item.image_url)}
                                                             alt=""
@@ -248,7 +248,7 @@ export default function Cart() {
                         {formatCurrency(shipping?.free_shipping_minimum ?? 1000)}+.
                     </p>
 
-                    <div className="flex items-center gap-5">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-5">
                         <p className="text-sm">
                             Subtotal ({chosen.length} item{chosen.length === 1 ? "" : "s"}):{" "}
                             <span className="text-xl text-[#EE4D2D]">{formatCurrency(subtotal)}</span>
@@ -256,7 +256,7 @@ export default function Cart() {
                         <button
                             type="button"
                             onClick={checkout}
-                            className="rounded bg-[#EE4D2D] px-10 py-3 text-sm text-white hover:bg-[#d73211]"
+                            className="rounded bg-[#EE4D2D] px-8 py-3 text-sm text-white hover:bg-[#d73211] sm:px-10"
                         >
                             Check out
                         </button>

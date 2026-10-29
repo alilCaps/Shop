@@ -125,3 +125,7 @@ export const MessageIcon = (props) => (
     <svg {...base} {...props}><path d="M4 5h16v11H9l-5 4V5Z" /></svg>
 );
 export const CogIcon = SettingsIcon;
+
+export const MenuIcon = (props) => (
+    <svg {...base} {...props}><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+);
