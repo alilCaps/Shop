@@ -53,7 +53,7 @@ export default function AdminLayout() {
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
-              className="rounded-lg border border-gray-200 p-2 text-gray-700 hover:bg-gray-50 lg:hidden"
+              className="rounded-lg border border-gray-200 p-2 text-gray-700 hover:bg-gray-50 md:hidden"
             >
               <MenuIcon width={20} height={20} />
             </button>

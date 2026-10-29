@@ -65,13 +65,13 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
     <>
     {open && (
       <div
-        className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+        className="fixed inset-0 z-40 bg-black/40 md:hidden"
         onClick={onClose}
         aria-hidden="true"
       />
     )}
     <aside
-      className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 max-w-[85vw] shrink-0 flex-col bg-white text-gray-700 shadow-lg transition-transform duration-200 lg:sticky lg:top-0 lg:z-auto lg:max-w-none lg:translate-x-0 lg:self-start ${
+      className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 max-w-[85vw] shrink-0 flex-col bg-white text-gray-700 shadow-lg transition-transform duration-200 md:sticky md:top-0 md:z-auto md:max-w-none md:translate-x-0 md:self-start ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
     >

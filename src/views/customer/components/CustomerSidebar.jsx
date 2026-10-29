@@ -51,7 +51,7 @@ function CustomerSidebar({
         <>
             {open && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/40"
+                    className="fixed inset-0 z-40 bg-black/40 md:hidden"
                     onClick={onClose}
                     aria-hidden="true"
                 />
@@ -59,9 +59,8 @@ function CustomerSidebar({
 
             <aside
                 aria-label="Account menu"
-                aria-hidden={!open}
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 ${
-                    open ? "translate-x-0" : "-translate-x-full invisible"
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl transition-transform duration-200 md:static md:z-auto md:w-48 md:max-w-none md:translate-x-0 md:self-start md:overflow-hidden md:rounded-lg md:shadow-sm ${
+                    open ? "translate-x-0" : "max-md:invisible max-md:-translate-x-full"
                 }`}
             >
                 {/* PROFILE */}
@@ -87,7 +86,7 @@ function CustomerSidebar({
                         type="button"
                         onClick={onClose}
                         aria-label="Close menu"
-                        className="rounded p-1 text-gray-500 hover:bg-gray-100"
+                        className="rounded p-1 text-gray-500 hover:bg-gray-100 md:hidden"
                     >
                         <XIcon width={18} height={18} />
                     </button>
