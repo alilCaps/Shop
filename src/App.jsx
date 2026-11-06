@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./LandingPage.jsx";
 import Login from "./Login.jsx";
 import Signup from "./SignUp.jsx";
+import ForgotPassword from "./ForgotPassword.jsx";
 
 import ProductSearch from "./views/store/ProductSearch.jsx";
 import ProductDetail from "./views/store/ProductDetail.jsx";
@@ -53,6 +54,7 @@ export default function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Storefront */}
       <Route path="/search" element={<ProductSearch />} />

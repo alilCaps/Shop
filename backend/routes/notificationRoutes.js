@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const { authenticate } = require("../utils/auth");
-const { pdb, validId, handler } = require("../utils/helpers");
+const { pdb, validId, handler, requireActiveAccount } = require("../utils/helpers");
 
 // Notifications belong to whoever is logged in (customers and sellers).
-router.use(authenticate);
+router.use(authenticate, requireActiveAccount);
 
 router.get(
     "/",

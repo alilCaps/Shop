@@ -5,9 +5,11 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const adminExtra = require("../controllers/adminExtraController");
 const { authenticate, requireRole } = require("../utils/auth");
+const { requireActiveAccount, rejectNestedValues } = require("../utils/helpers");
 
 // Everything under /api/admin needs an administrator token.
-router.use(authenticate, requireRole("ADMIN"));
+// The account must also still be active (checked against the database).
+router.use(authenticate, requireRole("ADMIN"), requireActiveAccount, rejectNestedValues);
 
 // Dashboard overview
 router.get("/overview", adminController.getAdminOverview);

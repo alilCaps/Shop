@@ -100,6 +100,62 @@ async function requireUser(req, res, next) {
     }
 }
 
+// For routes that only need "a logged-in, still-active account" (admin area,
+// notifications, uploads). Tokens last 7 days, so this re-checks the database:
+// a deactivated account, or one whose role changed, loses access immediately.
+async function requireActiveAccount(req, res, next) {
+    try {
+        const [rows] = await pdb.query(
+            `SELECT u.status, r.role_name
+             FROM users u
+             INNER JOIN roles r ON r.role_id = u.role_id
+             WHERE u.user_id = ?`,
+            [req.auth.uid]
+        );
+
+        const account = rows[0];
+
+        if (!account) {
+            return res.status(401).json({
+                message: "Your session has expired. Please log in again."
+            });
+        }
+
+        if (account.status !== "ACTIVE") {
+            return res.status(403).json({ message: "Account is not active." });
+        }
+
+        if (String(account.role_name).toUpperCase() !== req.auth.role) {
+            return res.status(401).json({
+                message: "Your session has expired. Please log in again."
+            });
+        }
+
+        return next();
+    } catch (error) {
+        console.error("REQUIRE ACTIVE ACCOUNT ERROR:", error);
+        return res.status(500).json({ message: "Unable to verify account." });
+    }
+}
+
+// Admin forms only ever send flat values (text, numbers, true/false, null).
+// Anything nested (objects/arrays) is refused before it can reach a query.
+function rejectNestedValues(req, res, next) {
+    const body = req.body;
+
+    if (body && typeof body === "object") {
+        const nested = Object.values(body).some(
+            (value) => value !== null && typeof value === "object"
+        );
+
+        if (nested || Array.isArray(body)) {
+            return res.status(400).json({ message: "Invalid request body." });
+        }
+    }
+
+    return next();
+}
+
 async function getShippingSettings(conn = pdb) {
     const settings = { ...DEFAULT_SETTINGS };
 
@@ -195,6 +251,8 @@ module.exports = {
     generateOrderNumber,
     handler,
     requireUser,
+    requireActiveAccount,
+    rejectNestedValues,
     getShippingSettings,
     calculateShipping,
     notify,

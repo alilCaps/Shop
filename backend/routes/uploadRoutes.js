@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { authenticate } = require("../utils/auth");
-const { pdb, handler } = require("../utils/helpers");
+const { pdb, handler, requireActiveAccount } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -41,6 +41,7 @@ function detectImage(buffer) {
 router.post(
     "/",
     authenticate,
+    requireActiveAccount,
     express.json({ limit: "8mb" }),
     handler(async function uploadImage(req, res) {
         const raw = typeof req.body?.data === "string" ? req.body.data : "";

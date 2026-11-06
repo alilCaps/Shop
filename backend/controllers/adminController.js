@@ -171,6 +171,17 @@ exports.updateUser = async (req, res) => {
     }
   }
 
+  // An admin must not lock themselves out of the admin panel by mistake.
+  if (
+    body.status !== undefined &&
+    body.status !== "ACTIVE" &&
+    Number(userId) === req.auth.uid
+  ) {
+    return res.status(400).json({
+      message: "You cannot deactivate your own account.",
+    });
+  }
+
   for (const field of ["first_name", "last_name"]) {
     if (body[field] !== undefined) {
       if (typeof body[field] !== "string" || !body[field].trim()) {

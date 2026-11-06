@@ -22,7 +22,10 @@ const db = mysql.createPool({
     // Hosted databases such as Aiven require TLS: set DB_SSL=true.
     ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
     waitForConnections: true,
-    connectionLimit: 10
+    connectionLimit: 10,
+    // Defense in depth: an object sent by a client (e.g. {"a":1} in a JSON body)
+    // is turned into text, never into SQL fragments.
+    stringifyObjects: true
 });
 
 db.getConnection((err, connection) => {
