@@ -45,6 +45,22 @@ function verify(token) {
     }
 }
 
+// Keyed hash for one-time secrets (password reset codes and tokens), so only
+// the hash is ever stored in the database. `purpose` keeps the uses apart.
+function hashSecret(purpose, value) {
+    return crypto
+        .createHmac("sha256", SECRET)
+        .update(`${purpose}:${value}`)
+        .digest("hex");
+}
+
+function safeEqualHex(a, b) {
+    const x = Buffer.from(String(a));
+    const y = Buffer.from(String(b));
+
+    return x.length === y.length && crypto.timingSafeEqual(x, y);
+}
+
 function createToken(user) {
     return sign({
         uid: Number(user.user_id),
@@ -98,6 +114,8 @@ function requireSelfOrAdmin(req, res, next) {
 }
 
 module.exports = {
+    hashSecret,
+    safeEqualHex,
     createToken,
     authenticate,
     requireRole,
